@@ -511,7 +511,7 @@ open class SwiftyCamViewController: UIViewController {
 	public func startVideoRecording() {
 
         guard sessionRunning == true else {
-            print("[SwiftyCam]: Cannot start video recoding. Capture session is not running")
+            log.info("[SwiftyCam]: Cannot start video recoding. Capture session is not running")
             return
         }
 		guard let movieFileOutput = self.movieFileOutput else {
@@ -605,7 +605,7 @@ open class SwiftyCamViewController: UIViewController {
 	public func switchCamera() {
 		guard isVideoRecording != true else {
 			//TODO: Look into switching camera during video recording
-			print("[SwiftyCam]: Switching between cameras while recording video is not supported")
+			log.info("[SwiftyCam]: Switching between cameras while recording video is not supported")
 			return
 		}
 
@@ -728,7 +728,7 @@ open class SwiftyCamViewController: UIViewController {
 
 				device.unlockForConfiguration()
 			} catch {
-				print("[SwiftyCam]: Error locking configuration")
+				log.info("[SwiftyCam]: Error locking configuration")
 			}
 		}
 
@@ -739,8 +739,8 @@ open class SwiftyCamViewController: UIViewController {
                     session.addInput(videoDeviceInput)
                     self.videoDeviceInput = videoDeviceInput
                 } else {
-                    print("[SwiftyCam]: Could not add video device input to the session")
-                    print(session.canSetSessionPreset(AVCaptureSession.Preset(rawValue: videoInputPresetFromVideoQuality(quality: videoQuality))))
+                    log.info("[SwiftyCam]: Could not add video device input to the session")
+                    log.info(session.canSetSessionPreset(AVCaptureSession.Preset(rawValue: videoInputPresetFromVideoQuality(quality: videoQuality))))
                     setupResult = .configurationFailed
                     session.commitConfiguration()
                     return
@@ -748,7 +748,7 @@ open class SwiftyCamViewController: UIViewController {
             }
 			
 		} catch {
-			print("[SwiftyCam]: Could not create video device input: \(error)")
+			log.info("[SwiftyCam]: Could not create video device input: \(error)")
 			setupResult = .configurationFailed
 			return
 		}
@@ -766,15 +766,15 @@ open class SwiftyCamViewController: UIViewController {
                 if session.canAddInput(audioDeviceInput) {
                     session.addInput(audioDeviceInput)
                 } else {
-                    print("[SwiftyCam]: Could not add audio device input to the session")
+                    log.info("[SwiftyCam]: Could not add audio device input to the session")
                 }
                 
             } else {
-                print("[SwiftyCam]: Could not find an audio device")
+                log.info("[SwiftyCam]: Could not find an audio device")
             }
             
 		} catch {
-			print("[SwiftyCam]: Could not create audio device input: \(error)")
+			log.info("[SwiftyCam]: Could not create audio device input: \(error)")
 		}
 	}
 
@@ -839,7 +839,7 @@ open class SwiftyCamViewController: UIViewController {
 	fileprivate func capturePhotoAsyncronously(completionHandler: @escaping(Bool) -> ()) {
 
         guard sessionRunning == true else {
-            print("[SwiftyCam]: Cannot take photo. Capture session is not running")
+            log.info("[SwiftyCam]: Cannot take photo. Capture session is not running")
             return
         }
 
@@ -910,7 +910,7 @@ open class SwiftyCamViewController: UIViewController {
 				return AVCaptureSession.Preset.hd4K3840x2160.rawValue
 			}
 			else {
-				print("[SwiftyCam]: Resolution 3840x2160 not supported")
+				log.info("[SwiftyCam]: Resolution 3840x2160 not supported")
 				return AVCaptureSession.Preset.high.rawValue
 			}
 		}
@@ -927,7 +927,7 @@ open class SwiftyCamViewController: UIViewController {
 				let avDevice = AVCaptureDevice.devices(for: AVMediaType(rawValue: mediaType))
 				var avDeviceNum = 0
 				for device in avDevice {
-						print("deviceWithMediaType Position: \(device.position.rawValue)")
+						log.info("deviceWithMediaType Position: \(device.position.rawValue)")
 						if device.position == position {
 								break
 						} else {
@@ -949,7 +949,7 @@ fileprivate func changeFlashSettings(device: AVCaptureDevice, mode: FlashMode) {
 			device.flashMode = mode.AVFlashMode
 			device.unlockForConfiguration()
 		} catch {
-			print("[SwiftyCam]: \(error)")
+			log.info("[SwiftyCam]: \(error)")
 		}
 	}
 
@@ -990,12 +990,12 @@ fileprivate func changeFlashSettings(device: AVCaptureDevice, mode: FlashMode) {
 						try device?.setTorchModeOn(level: 1.0)
 						self.isCameraTorchOn = true
 					} catch {
-						print("[SwiftyCam]: \(error)")
+						log.info("[SwiftyCam]: \(error)")
 					}
 				}
 				device?.unlockForConfiguration()
 			} catch {
-				print("[SwiftyCam]: \(error)")
+				log.info("[SwiftyCam]: \(error)")
 			}
 		}
 	}
@@ -1024,7 +1024,7 @@ fileprivate func changeFlashSettings(device: AVCaptureDevice, mode: FlashMode) {
 			session.automaticallyConfiguresApplicationAudioSession = false
 		}
 		catch {
-			print("[SwiftyCam]: Failed to set background audio preference")
+			log.info("[SwiftyCam]: Failed to set background audio preference")
 
 		}
 	}
@@ -1098,7 +1098,7 @@ extension SwiftyCamViewController : AVCaptureFileOutputRecordingDelegate {
         }
 
         if let currentError = error {
-            print("[SwiftyCam]: Movie file finishing error: \(currentError)")
+            log.info("[SwiftyCam]: Movie file finishing error: \(currentError)")
             DispatchQueue.main.async {
                 self.cameraDelegate?.swiftyCam(self, didFailToRecordVideo: currentError)
             }
@@ -1138,7 +1138,7 @@ extension SwiftyCamViewController {
 			captureDevice?.unlockForConfiguration()
 
 		} catch {
-			print("[SwiftyCam]: Error locking configuration")
+			log.info("[SwiftyCam]: Error locking configuration")
 		}
 	}
 
@@ -1220,7 +1220,7 @@ extension SwiftyCamViewController {
             captureDevice?.unlockForConfiguration()
 
         } catch {
-            print("[SwiftyCam]: Error locking configuration")
+            log.info("[SwiftyCam]: Error locking configuration")
         }
 
         if pan.state == .ended || pan.state == .failed || pan.state == .cancelled {

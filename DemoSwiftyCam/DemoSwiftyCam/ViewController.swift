@@ -46,12 +46,12 @@ class ViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
 	}
     
     func swiftyCamSessionDidStartRunning(_ swiftyCam: SwiftyCamViewController) {
-        print("Session did start running")
+        log.info("Session did start running")
         captureButton.buttonEnabled = true
     }
     
     func swiftyCamSessionDidStopRunning(_ swiftyCam: SwiftyCamViewController) {
-        print("Session did stop running")
+        log.info("Session did stop running")
         captureButton.buttonEnabled = false
     }
     
@@ -62,13 +62,13 @@ class ViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
 	}
 
 	func swiftyCam(_ swiftyCam: SwiftyCamViewController, didBeginRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
-		print("Did Begin Recording")
+		log.info("Did Begin Recording")
 		captureButton.growButton()
         hideButtons()
 	}
 
 	func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFinishRecordingVideo camera: SwiftyCamViewController.CameraSelection) {
-		print("Did finish Recording")
+		log.info("Did finish Recording")
 		captureButton.shrinkButton()
         showButtons()
 	}
@@ -79,7 +79,7 @@ class ViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
 	}
 
 	func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFocusAtPoint point: CGPoint) {
-        print("Did focus at point: \(point)")
+        log.info("Did focus at point: \(point)")
         focusAnimationAt(point)
 	}
     
@@ -91,17 +91,17 @@ class ViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     }
 
 	func swiftyCam(_ swiftyCam: SwiftyCamViewController, didChangeZoomLevel zoom: CGFloat) {
-        print("Zoom level did change. Level: \(zoom)")
-		print(zoom)
+        log.info("Zoom level did change. Level: \(zoom)")
+		log.info(zoom)
 	}
 
 	func swiftyCam(_ swiftyCam: SwiftyCamViewController, didSwitchCameras camera: SwiftyCamViewController.CameraSelection) {
-        print("Camera did change to \(camera.rawValue)")
-		print(camera)
+        log.info("Camera did change to \(camera.rawValue)")
+		log.info(camera)
 	}
     
     func swiftyCam(_ swiftyCam: SwiftyCamViewController, didFailToRecordVideo error: Error) {
-        print(error)
+        log.info(error)
     }
 
     @IBAction func cameraSwitchTapped(_ sender: Any) {

@@ -15,6 +15,7 @@
 
 
 import UIKit
+import SwiftyBeaver
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,6 +25,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        let console = ConsoleDestination()  // log to Xcode Console
+        let file = FileDestination()  // log to default swiftybeaver.log file
+//        let cloud = SBPlatformDestination(appID: "foo", appSecret: "bar", encryptionKey: "123") // to cloud
+
+        // use custom format and set console output to short time, log level & message
+        console.format = "$DHH:mm:ss.SSS$d $L$c $N.$F:$l - $M $X"
+        // or use this for JSON output: console.format = "$J"
+        console.levelString.verbose = "🐷"
+        console.levelString.debug = "🛠️"
+        console.levelString.info = "ℹ️"
+        console.levelString.warning = "⚠️"
+        console.levelString.error = "💥"
+
+        // add the destinations to SwiftyBeaver
+        log.addDestination(console)
+        log.addDestination(file)
+//        log.addDestination(cloud)
+        
         return true
     }
 
