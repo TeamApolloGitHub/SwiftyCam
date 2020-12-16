@@ -27,6 +27,7 @@
 		168505E81E288B4C005B4537 /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168505E71E288B4C005B4537 /* VideoViewController.swift */; };
 		168505EA1E288D80005B4537 /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168505E91E288D80005B4537 /* PhotoViewController.swift */; };
 		DF57492A2589E984002B5BBB /* HelperExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5749292589E984002B5BBB /* HelperExtensions.swift */; };
+		DF57492F258A0D25002B5BBB /* VideoToolBoxCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF57492E258A0D25002B5BBB /* VideoToolBoxCompressor.swift */; };
 		DF7B87FA2589E57B0066AB90 /* SwiftyBeaver in Frameworks */ = {isa = PBXBuildFile; productRef = DF7B87F92589E57B0066AB90 /* SwiftyBeaver */; };
 		DF7B88002589E7470066AB90 /* common.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FD2589E7470066AB90 /* common.swift */; };
 		DF7B88012589E7470066AB90 /* MediaUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FE2589E7470066AB90 /* MediaUtil.swift */; };
@@ -53,6 +54,7 @@
 		168505E71E288B4C005B4537 /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
 		168505E91E288D80005B4537 /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		DF5749292589E984002B5BBB /* HelperExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperExtensions.swift; sourceTree = "<group>"; };
+		DF57492E258A0D25002B5BBB /* VideoToolBoxCompressor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoToolBoxCompressor.swift; sourceTree = "<group>"; };
 		DF7B87FD2589E7470066AB90 /* common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = common.swift; sourceTree = "<group>"; };
 		DF7B87FE2589E7470066AB90 /* MediaUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaUtil.swift; sourceTree = "<group>"; };
 		DF7B87FF2589E7470066AB90 /* CameraUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraUtil.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				DF7B87FF2589E7470066AB90 /* CameraUtil.swift */,
 				DF7B87FE2589E7470066AB90 /* MediaUtil.swift */,
 				DF5749292589E984002B5BBB /* HelperExtensions.swift */,
+				DF57492E258A0D25002B5BBB /* VideoToolBoxCompressor.swift */,
 				DF7B87FD2589E7470066AB90 /* common.swift */,
 				1675A9791E00A68300B80903 /* Main.storyboard */,
 				1675A97C1E00A68300B80903 /* Assets.xcassets */,
@@ -274,6 +277,7 @@
 				1675A9781E00A68300B80903 /* ViewController.swift in Sources */,
 				1675A9901E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift in Sources */,
 				168505E81E288B4C005B4537 /* VideoViewController.swift in Sources */,
+				DF57492F258A0D25002B5BBB /* VideoToolBoxCompressor.swift in Sources */,
 				DF7B88002589E7470066AB90 /* common.swift in Sources */,
 				1675A9761E00A68300B80903 /* AppDelegate.swift in Sources */,
 				1675A98F1E00A74A00B80903 /* SwiftyCamViewController.swift in Sources */,
