@@ -41,6 +41,12 @@ public protocol SwiftyCamButtonDelegate: class {
     /// Sets the maximum duration of the video recording
     
     func setMaxiumVideoDuration() -> Double
+    
+    /// False to disable long press.
+    
+    func enableLongPress() -> Bool
+    
+    
 }
 
 // MARK: Public View Declaration
@@ -80,6 +86,8 @@ open class SwiftyCamButton: UIButton {
     /// UITapGestureRecognizer Function
     
     @objc fileprivate func Tap() {
+        log.debug("single tap, button enabled? \(buttonEnabled)")
+        
         guard buttonEnabled == true else {
             return
         }
@@ -89,7 +97,12 @@ open class SwiftyCamButton: UIButton {
     
     /// UILongPressGestureRecognizer Function
     @objc fileprivate func LongPress(_ sender:UILongPressGestureRecognizer!)  {
+        log.debug("long press, button enabled? \(buttonEnabled), long press enabled? \(String(describing: delegate?.enableLongPress()))")
         guard buttonEnabled == true else {
+            return
+        }
+        
+        guard delegate?.enableLongPress() == true else {
             return
         }
         
