@@ -68,25 +68,29 @@ class VideoToolBoxCompressor : NSObject {
     private var assetWriter:AVAssetWriter?
     private var assetWriterInput:AVAssetWriterInput?
     
-    
-    var outputAssetURL:URL?
+    var outputMovURL:URL?
+    var outputPngURL:URL?
     private var completionBlock:((Error?) -> ())?
     
     // Only MOV container is supported.
-    func prepareTmpOutpuMovFile() {
-        self.outputAssetURL = MediaUtil.generateTmpMovFileURL()
+    private func prepareTmpOutputMovFile() {
+        self.outputMovURL = MediaUtil.generateTmpMovFileURL()
+    }
+    
+    private func prepareTmpOutputPngFile() {
+        self.outputPngURL = MediaUtil.generateTmpPngFileURL()
     }
     
     private func getVideoTransform() -> CGAffineTransform {
         switch UIDevice.current.orientation {
             case .portrait:
-                return .identity
-            case .portraitUpsideDown:
-                return CGAffineTransform(rotationAngle: .pi)
-            case .landscapeLeft:
                 return CGAffineTransform(rotationAngle: .pi/2)
-            case .landscapeRight:
+            case .portraitUpsideDown:
                 return CGAffineTransform(rotationAngle: -.pi/2)
+            case .landscapeLeft:
+                return .identity
+            case .landscapeRight:
+                return CGAffineTransform(rotationAngle: .pi)
             default:
                 return .identity
         }
@@ -156,12 +160,13 @@ class VideoToolBoxCompressor : NSObject {
         VTCompressionSessionPrepareToEncodeFrames(c)
         
         do {
-            if let _ = self.outputAssetURL {
+            if let _ = self.outputMovURL, let _ = self.outputPngURL {
                 
             } else {
-                self.prepareTmpOutpuMovFile()
+                self.prepareTmpOutputMovFile()
+                self.prepareTmpOutputPngFile()
             }
-            self.assetWriter = try AVAssetWriter(outputURL: self.outputAssetURL!, fileType: .mov)
+            self.assetWriter = try AVAssetWriter(outputURL: self.outputMovURL!, fileType: .mov)
             
             //outputSettings = nil => no compression, buffer is in compressed state already.
             self.assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: nil)
@@ -211,7 +216,19 @@ class VideoToolBoxCompressor : NSObject {
                                                  frameProperties: nil,
                                                  sourceFrameRefcon: nil,
                                                  infoFlagsOut: nil)
+                
+                
+                // Create a CIImage from the pixel buffer and apply a filter
+                let image = UIImage(pixelBuffer: pixelBuffer)
+                do {
+                    try image!.pngData()!.write(to: self.outputPngURL!)
+                    log.info("PNG written at: \(self.outputPngURL!), size: \(self.outputPngURL!.bytesSizeIfAvailable())")
+                } catch {
+                    log.warning("failed to write PNG: \(error)")
+                }
              }
+            
+            
          }
     }
     
@@ -242,8 +259,8 @@ class VideoToolBoxCompressor : NSObject {
             self.compressionSession = nil
             
             self.writingQueue.async {
-                wi.markAsFinished()
                 
+                wi.markAsFinished()
                 var t = self.lastFrameTime
                 if (self.expectingSingleFrame) {
                     t = CMTimeMakeWithSeconds(CMTimeGetSeconds(t) + 3, preferredTimescale: t.timescale)
@@ -252,11 +269,12 @@ class VideoToolBoxCompressor : NSObject {
                 
                 w.finishWriting {
                     if (w.status == .completed) {
-                        log.info("MOV file written ok. \(self.outputAssetURL!.bytesSizeIfAvailable()) bytes of \(self.frameCount) frames.")
+                        log.info("MOV file written ok. \(self.outputMovURL!.bytesSizeIfAvailable()) bytes of \(self.frameCount) frames.")
                     } else {
                         log.warning("MOV file written with error: \(String(describing: w.error))")
                         self.completionBlock?(w.error)
                     }
+                    
                     self.assetWriterInput = nil
                     self.assetWriter = nil
                     
@@ -282,5 +300,4 @@ class VideoToolBoxCompressor : NSObject {
             while (!writerInput.isReadyForMoreMediaData) {}
         }
     }
-     
 }

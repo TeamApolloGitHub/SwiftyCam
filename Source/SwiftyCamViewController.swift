@@ -158,7 +158,7 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Sets whether a double tap to switch cameras is supported
 
-	public var doubleTapCameraSwitch            = true
+	public var doubleTapCameraSwitch            = false
 
     /// Sets whether swipe vertically to zoom is supported
 
@@ -194,9 +194,6 @@ open class SwiftyCamViewController: UIViewController {
     /// Sets whether or not app should display prompt to app settings if audio/video permission is denied
     /// If set to false, delegate function will be called to handle exception
     public var shouldPrompToAppSettings       = true
-
-    /// Video will be recorded to this folder
-    public var outputFolder: String           = NSTemporaryDirectory()
     
     /// Public access to Pinch Gesture
     fileprivate(set) public var pinchGesture  : UIPinchGestureRecognizer!
@@ -288,6 +285,11 @@ open class SwiftyCamViewController: UIViewController {
 	/// Sets output video codec
     
     public var videoCodecType: AVVideoCodecType? = nil
+    
+    
+    /// Frame data output
+    
+    private var videoDataOutput: AVCaptureVideoDataOutput? = nil
 
 	// MARK: ViewDidLoad
 
@@ -633,7 +635,6 @@ open class SwiftyCamViewController: UIViewController {
 		session.commitConfiguration()
 	}
 
-
 	// Front facing camera will always be set to VideoQuality.high
 	// If set video quality is not supported, videoQuality variable will be set to VideoQuality.high
 	/// Configure image quality preset
@@ -660,11 +661,16 @@ open class SwiftyCamViewController: UIViewController {
 			videoDevice = SwiftyCamViewController.deviceWithMediaType(AVMediaType.video.rawValue, preferringPosition: .back)
 		}
         
-        CameraUtil.dumpAllFormats(with: videoDevice!.formats)
+//        CameraUtil.dumpAllFormats(with: videoDevice!.formats)
 
 		if let device = videoDevice {
 			do {
 				try device.lockForConfiguration()
+                
+                defer {
+                    device.unlockForConfiguration()
+                }
+                
 				if device.isFocusModeSupported(.continuousAutoFocus) {
 					device.focusMode = .continuousAutoFocus
 					if device.isSmoothAutoFocusSupported {
@@ -684,7 +690,6 @@ open class SwiftyCamViewController: UIViewController {
 					device.automaticallyEnablesLowLightBoostWhenAvailable = true
 				}
 
-				device.unlockForConfiguration()
 			} catch {
 				log.info("[SwiftyCam]: Error locking configuration")
 			}
@@ -700,11 +705,26 @@ open class SwiftyCamViewController: UIViewController {
                     log.info("[SwiftyCam]: Could not add video device input to the session")
                     log.info(session.canSetSessionPreset(AVCaptureSession.Preset(rawValue: videoInputPresetFromVideoQuality(quality: videoQuality))))
                     setupResult = .configurationFailed
-                    session.commitConfiguration()
                     return
                 }
+                
+                CameraUtil.setHighestVideoCaptureMode(with: videoDevice)
+                
+                if (self.videoDataOutput == nil) {
+                    log.info("current active camera setting before initing video data output: \(videoDevice.activeFormat)")
+                    
+                    self.videoDataOutput = AVCaptureVideoDataOutput()
+                    self.videoDataOutput?.alwaysDiscardsLateVideoFrames = true
+                    self.videoDataOutput?.setSampleBufferDelegate(self, queue:self.sessionQueue)
+
+                    if self.session.canAddOutput(self.videoDataOutput!) {
+                        log.info("adding extra data output for video frame.")
+                        self.session.addOutput(self.videoDataOutput!)
+                    } else {
+                        log.info("can not add data output.")
+                    }
+                }
             }
-			
 		} catch {
 			log.info("[SwiftyCam]: Could not create video device input: \(error)")
 			setupResult = .configurationFailed
@@ -950,68 +970,50 @@ fileprivate func changeFlashSettings(device: AVCaptureDevice, mode: FlashMode) {
 }
 
  extension SwiftyCamViewController : SwiftyCamButtonDelegate {
-    public func enableLongPress() -> Bool {
+    @objc public func enableLongPress() -> Bool {
         return false
     }
 
 	/// Sets the maximum duration of the SwiftyCamButton
 
-	public func setMaxiumVideoDuration() -> Double {
+    @objc public func setMaxiumVideoDuration() -> Double {
 		return maximumVideoDuration
 	}
 
 	/// Set UITapGesture to take photo
 
-	public func buttonWasTapped() {
+	@objc public func buttonWasTapped() {
 		takePhoto()
 	}
 
 	/// Set UILongPressGesture start to begin video
 
-	public func buttonDidBeginLongPress() {
+    @objc public func buttonDidBeginLongPress() {
 		startVideoRecording()
 	}
 
 	/// Set UILongPressGesture begin to begin end video
 
 
-	public func buttonDidEndLongPress() {
+    @objc public func buttonDidEndLongPress() {
 		stopVideoRecording()
 	}
 
 	/// Called if maximum duration is reached
 
-	public func longPressDidReachMaximumDuration() {
+    @objc public func longPressDidReachMaximumDuration() {
 		stopVideoRecording()
 	}
 }
 
 // MARK: AVCaptureFileOutputRecordingDelegate
 
-extension SwiftyCamViewController : AVCaptureFileOutputRecordingDelegate {
+extension SwiftyCamViewController : AVCaptureVideoDataOutputSampleBufferDelegate {
 
 	/// Process newly captured video and write it to temporary directory
 
-    public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        if let currentBackgroundRecordingID = backgroundRecordingID {
-            backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
-
-            if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
-                UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
-            }
-        }
-
-        if let currentError = error {
-            log.info("[SwiftyCam]: Movie file finishing error: \(currentError)")
-            DispatchQueue.main.async {
-                self.cameraDelegate?.swiftyCam(self, didFailToRecordVideo: currentError)
-            }
-        } else {
-            //Call delegate function with the URL of the outputfile
-            DispatchQueue.main.async {
-                self.cameraDelegate?.swiftyCam(self, didFinishProcessVideoAt: outputFileURL)
-            }
-        }
+    public func captureOutput(_ output:AVCaptureOutput, didOutput sampleBuffer:CMSampleBuffer, from connection:AVCaptureConnection) {
+        self.cameraDelegate!.swiftyCamCaptureOutput(output, didOutput: sampleBuffer, from: connection)
     }
 }
 

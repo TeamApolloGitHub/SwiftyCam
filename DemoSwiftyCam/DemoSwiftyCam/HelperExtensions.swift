@@ -25,8 +25,8 @@ extension UIImage {
         log.info("color space for frame: \(String(describing: cgImageRef!.colorSpace))")
         log.info("bits per componet for frame: \(String(describing: cgImageRef!.bitsPerComponent))")
         log.info("bits per pixel for frame: \(String(describing: cgImageRef!.bitsPerPixel))")
-//        self.init(cgImage: cgImageRef!, scale: 1.0, orientation:UIImage.Orientation.down)
-        self.init(cgImage: cgImageRef!)
+        self.init(cgImage: cgImageRef!, scale: 1.0, orientation:UIImage.Orientation.down)
+//        self.init(cgImage: cgImageRef!)
     }
 }
 

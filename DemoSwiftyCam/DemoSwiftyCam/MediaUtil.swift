@@ -167,6 +167,12 @@ class MediaUtil : NSObject {
         return URL(fileURLWithPath: outputFilePath)
     }
     
+    class func generateTmpPngFileURL() -> URL {
+        let outputFileName = ProcessInfo().globallyUniqueString
+        let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("png")!)
+        return URL(fileURLWithPath: outputFilePath)
+    }
+    
     class func writeTmpFileWithData(data:Data, tmpName:String?) throws -> URL {
         let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(),
                                             isDirectory: true)

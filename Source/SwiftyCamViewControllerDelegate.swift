@@ -130,6 +130,8 @@ public protocol SwiftyCamViewControllerDelegate: class {
      */
     
     func swiftyCamNotAuthorized(_ swiftyCam: SwiftyCamViewController)
+    
+    func swiftyCamCaptureOutput(_ output:AVCaptureOutput, didOutput sampleBuffer:CMSampleBuffer, from connection:AVCaptureConnection)
 }
 
 public extension SwiftyCamViewControllerDelegate {
@@ -187,6 +189,3 @@ public extension SwiftyCamViewControllerDelegate {
         // Optional
     }
 }
-
-
-

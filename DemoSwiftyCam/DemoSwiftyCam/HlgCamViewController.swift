@@ -16,12 +16,19 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 
 import UIKit
 import AVFoundation
+import PhotosUI
 
-class ViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
+class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     @IBOutlet weak var captureButton    : SwiftyRecordButton!
     @IBOutlet weak var flipCameraButton : UIButton!
     @IBOutlet weak var flashButton      : UIButton!
+    
+    private var saveThisFrame = false
+    private var workOnSaving = false
+    
+    private var vtbCompressor:VideoToolBoxCompressor? = nil
+    private var vtbFailureAlert:Bool = false
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -112,11 +119,100 @@ class ViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
         //flashEnabled = !flashEnabled
         toggleFlashAnimation()
     }
+    
+    private func saveFrameMovToCameraRoll(movFile:URL, pngFile:URL) {
+        // Check the authorization status.
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                // Save the movie file to the photo library and cleanup.
+                PHPhotoLibrary.shared().performChanges({
+                    let options = PHAssetResourceCreationOptions()
+                    options.shouldMoveFile = true
+                    
+                    let pngCreation = PHAssetCreationRequest.forAsset()
+                    pngCreation.addResource(with: .photo, fileURL: pngFile, options: options)
+                    
+                    let movCreation = PHAssetCreationRequest.forAsset()
+                    movCreation.addResource(with: .video, fileURL: movFile, options: options)
+                }, completionHandler: { success, error in
+                    if !success {
+                        log.warning("couldn't save the movie to your photo library: \(String(describing: error))")
+                        DispatchQueue.main.sync {
+                            MediaUtil.systemShareAction(url: movFile, from: self.view)
+                        }
+                    }
+                })
+            }
+        }
+    }
+    
+    public func swiftyCamCaptureOutput(_ output:AVCaptureOutput, didOutput sampleBuffer:CMSampleBuffer, from connection:AVCaptureConnection) {
+        
+        if (self.workOnSaving) {
+            return
+        }
+        
+        if (self.saveThisFrame == false) {
+            return
+        }
+        
+        self.workOnSaving = true
+        self.saveThisFrame = false
+        
+        log.info("got sample buffer: \(sampleBuffer)")
+        
+        self.vtbCompressor = VideoToolBoxCompressor()
+        self.vtbCompressor?.expectingSingleFrame = true
+        self.vtbCompressor?.compressQuality = UserDefaults.standard.double(forKey: "quality_preference")
+        self.vtbCompressor?.forceAVCCodec = UserDefaults.standard.bool(forKey: "avc_preference")
+        
+        log.info("compress quality: \(self.vtbCompressor!.compressQuality), force AVC: \(self.vtbCompressor!.forceAVCCodec)")
+        
+        self.vtbCompressor?.vtbPrepareEncoding(for: sampleBuffer, completion: { (e) in
+            if let error = e {
+                log.error("failed to save pixel buffer as mov file: \(error)")
+                if (self.vtbFailureAlert) {
+                    return
+                }
+                
+                self.vtbFailureAlert = true
+                DispatchQueue.main.async {
+                    let errorAlert = UIAlertController(title: "Failed", message: "Unable to capture this frame: \(error)", preferredStyle: UIAlertController.Style.alert)
+
+                    errorAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                        self.vtbFailureAlert = false
+                    }))
+
+                    self.present(errorAlert, animated: true, completion: nil)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    self.saveFrameMovToCameraRoll(
+                        movFile:self.vtbCompressor!.outputMovURL!,
+                        pngFile:self.vtbCompressor!.outputPngURL!
+                    )
+                }
+            }
+        })
+        
+        self.vtbCompressor?.vtbEncodeFrame(buffer: sampleBuffer)
+        self.vtbCompressor?.vtbFinishEncoding()
+        
+        self.workOnSaving = false
+    }
+    
+    override public func buttonWasTapped() {
+        if (self.workOnSaving) {
+            return
+        }
+        
+        self.saveThisFrame = true
+    }
 }
 
 
 // UI Animations
-extension ViewController {
+extension HlgCamViewController {
     
     fileprivate func hideButtons() {
         UIView.animate(withDuration: 0.25) {
