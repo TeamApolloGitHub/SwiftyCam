@@ -820,6 +820,10 @@ open class SwiftyCamViewController: UIViewController {
             if let avDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInTripleCamera, for: AVMediaType(rawValue: mediaType), position: position) {
 				return avDevice
             }
+            
+            if let avDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInDualCamera, for: AVMediaType(rawValue: mediaType), position: position) {
+                return avDevice
+            }
 		}
         
         // Fallback on earlier versions
@@ -945,7 +949,10 @@ fileprivate func changeFlashSettings(device: AVCaptureDevice, mode: FlashMode) {
     }
 }
 
-extension SwiftyCamViewController : SwiftyCamButtonDelegate {
+ extension SwiftyCamViewController : SwiftyCamButtonDelegate {
+    public func enableLongPress() -> Bool {
+        return false
+    }
 
 	/// Sets the maximum duration of the SwiftyCamButton
 
