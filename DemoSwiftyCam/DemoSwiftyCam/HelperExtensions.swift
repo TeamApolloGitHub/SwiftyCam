@@ -14,7 +14,7 @@ import PhotosUI
 import VideoToolbox
 
 extension UIImage {
-    public convenience init?(pixelBuffer: CVPixelBuffer) {
+    public convenience init?(pixelBuffer: CVPixelBuffer, with orient:UIImage.Orientation) {
         var cgImageRef: CGImage?
         VTCreateCGImageFromCVPixelBuffer(pixelBuffer, options: nil, imageOut: &cgImageRef)
 
@@ -25,7 +25,8 @@ extension UIImage {
         log.info("color space for frame: \(String(describing: cgImageRef!.colorSpace))")
         log.info("bits per componet for frame: \(String(describing: cgImageRef!.bitsPerComponent))")
         log.info("bits per pixel for frame: \(String(describing: cgImageRef!.bitsPerPixel))")
-        self.init(cgImage: cgImageRef!, scale: 1.0, orientation:UIImage.Orientation.down)
+        log.info("orientaton  set to: \(String(describing: orient.rawValue))")
+        self.init(cgImage: cgImageRef!, scale: 1.0, orientation: orient)
 //        self.init(cgImage: cgImageRef!)
     }
 }

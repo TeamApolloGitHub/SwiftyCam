@@ -36,7 +36,7 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
 		cameraDelegate = self
 		maximumVideoDuration = 10.0
         shouldUseDeviceOrientation = true
-        allowAutoRotate = true
+        allowAutoRotate = false
         audioEnabled = true
         flashMode = .auto
         flashButton.setImage(#imageLiteral(resourceName: "flashauto"), for: UIControl.State())
@@ -159,13 +159,18 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         self.workOnSaving = true
         self.saveThisFrame = false
         
-        log.info("got sample buffer: \(sampleBuffer)")
+//        log.info("got sample buffer: \(sampleBuffer)")
         
         self.vtbCompressor = VideoToolBoxCompressor()
         self.vtbCompressor?.expectingSingleFrame = true
         self.vtbCompressor?.compressQuality = UserDefaults.standard.double(forKey: "quality_preference")
         self.vtbCompressor?.forceAVCCodec = UserDefaults.standard.bool(forKey: "avc_preference")
         
+        self.vtbCompressor?.imageOrientOpt =  self.orientation.getImageOrientation(forCamera: self.currentCamera)
+        self.vtbCompressor?.videoOrientOpt = self.orientation.getVideoOrientation()!
+        
+        log.info("image orientation: \(self.vtbCompressor!.imageOrientOpt.rawValue)")
+        log.info("video orientation: \(self.vtbCompressor!.videoOrientOpt.rawValue)")
         log.info("compress quality: \(self.vtbCompressor!.compressQuality), force AVC: \(self.vtbCompressor!.forceAVCCodec)")
         
         self.vtbCompressor?.vtbPrepareEncoding(for: sampleBuffer, completion: { (e) in
@@ -189,7 +194,7 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
                 DispatchQueue.main.async {
                     self.saveFrameMovToCameraRoll(
                         movFile:self.vtbCompressor!.outputMovURL!,
-                        pngFile:self.vtbCompressor!.outputPngURL!
+                        pngFile:self.vtbCompressor!.outputJpegURL!
                     )
                 }
             }

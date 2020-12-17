@@ -161,15 +161,9 @@ class MediaUtil : NSObject {
         }
     }
     
-    class func generateTmpMovFileURL() -> URL {
+    class func generateTmpFileURL(extension ext:String) -> URL {
         let outputFileName = ProcessInfo().globallyUniqueString
-        let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
-        return URL(fileURLWithPath: outputFilePath)
-    }
-    
-    class func generateTmpPngFileURL() -> URL {
-        let outputFileName = ProcessInfo().globallyUniqueString
-        let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("png")!)
+        let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension(ext)!)
         return URL(fileURLWithPath: outputFilePath)
     }
     

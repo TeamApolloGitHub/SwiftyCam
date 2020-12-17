@@ -56,6 +56,9 @@ class VideoToolBoxCompressor : NSObject {
     public var compressQuality = 0.5
     public var forceAVCCodec = false
     
+    public var imageOrientOpt:UIImage.Orientation = .up
+    public var videoOrientOpt:AVCaptureVideoOrientation = .landscapeLeft
+    
     private var frameCount = 0
     
     private var lastFrameTime = CMTimeMake(value:0, timescale:600)
@@ -69,32 +72,32 @@ class VideoToolBoxCompressor : NSObject {
     private var assetWriterInput:AVAssetWriterInput?
     
     var outputMovURL:URL?
-    var outputPngURL:URL?
+    var outputJpegURL:URL?
     private var completionBlock:((Error?) -> ())?
     
     // Only MOV container is supported.
     private func prepareTmpOutputMovFile() {
-        self.outputMovURL = MediaUtil.generateTmpMovFileURL()
+        self.outputMovURL = MediaUtil.generateTmpFileURL(extension: "mov")
     }
     
-    private func prepareTmpOutputPngFile() {
-        self.outputPngURL = MediaUtil.generateTmpPngFileURL()
+    private func prepareTmpOutputJpegFile() {
+        self.outputJpegURL = MediaUtil.generateTmpFileURL(extension: "jpg")
     }
     
     private func getVideoTransform() -> CGAffineTransform {
-        switch UIDevice.current.orientation {
+        switch self.videoOrientOpt {
             case .portrait:
                 return CGAffineTransform(rotationAngle: .pi/2)
             case .portraitUpsideDown:
                 return CGAffineTransform(rotationAngle: -.pi/2)
             case .landscapeLeft:
-                return .identity
-            case .landscapeRight:
                 return CGAffineTransform(rotationAngle: .pi)
+            case .landscapeRight:
+                return .identity
             default:
                 return .identity
+            }
         }
-    }
     
     func vtbPrepareEncoding(for sampleBuf:CMSampleBuffer, completion: @escaping (Error?) -> ()) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuf) else {
@@ -160,11 +163,11 @@ class VideoToolBoxCompressor : NSObject {
         VTCompressionSessionPrepareToEncodeFrames(c)
         
         do {
-            if let _ = self.outputMovURL, let _ = self.outputPngURL {
+            if let _ = self.outputMovURL, let _ = self.outputJpegURL {
                 
             } else {
                 self.prepareTmpOutputMovFile()
-                self.prepareTmpOutputPngFile()
+                self.prepareTmpOutputJpegFile()
             }
             self.assetWriter = try AVAssetWriter(outputURL: self.outputMovURL!, fileType: .mov)
             
@@ -219,12 +222,12 @@ class VideoToolBoxCompressor : NSObject {
                 
                 
                 // Create a CIImage from the pixel buffer and apply a filter
-                let image = UIImage(pixelBuffer: pixelBuffer)
+                let image = UIImage(pixelBuffer: pixelBuffer, with:self.imageOrientOpt)
                 do {
-                    try image!.pngData()!.write(to: self.outputPngURL!)
-                    log.info("PNG written at: \(self.outputPngURL!), size: \(self.outputPngURL!.bytesSizeIfAvailable())")
+                    try image!.jpegData(compressionQuality: 0.85)!.write(to: self.outputJpegURL!)
+                    log.info("JPEG written at: \(self.outputJpegURL!), size: \(self.outputJpegURL!.bytesSizeIfAvailable())")
                 } catch {
-                    log.warning("failed to write PNG: \(error)")
+                    log.warning("failed to write JPEG: \(error)")
                 }
              }
             

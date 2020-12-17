@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina6_0" orientation="portrait" appearance="light"/>
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,19 +16,19 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hke-fJ-4fX" customClass="SwiftyRecordButton" customModule="DemoSwiftyCam" customModuleProvider="target">
-                                <rect key="frame" x="157.66666666666666" y="707" width="75" height="75"/>
+                                <rect key="frame" x="122.5" y="465" width="75" height="75"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="75" id="8Mb-dy-Ned"/>
                                     <constraint firstAttribute="width" constant="75" id="YVv-UJ-n1R"/>
                                 </constraints>
                             </view>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hS2-sy-kuv">
-                                <rect key="frame" x="54.666666666666657" y="717" width="55" height="55"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hS2-sy-kuv">
+                                <rect key="frame" x="19.5" y="475" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="55" id="ZgA-AR-Nbq"/>
                                     <constraint firstAttribute="height" constant="55" id="ccd-JU-aC5"/>
@@ -38,7 +39,7 @@
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="stR-Rn-UdV">
-                                <rect key="frame" x="280.66666666666669" y="717" width="55" height="55"/>
+                                <rect key="frame" x="245.5" y="475" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="55" id="8dD-oU-QV8"/>
                                     <constraint firstAttribute="width" constant="55" id="rLN-FU-RYb"/>
@@ -48,14 +49,53 @@
                                     <action selector="toggleFlashTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C5u-0g-Kim"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GLY-dx-vLd">
+                                <rect key="frame" x="248" y="218" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="TrE-4y-md1"/>
+                                    <constraint firstAttribute="height" constant="44" id="UaM-t1-8oD"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="arrowtriangle.up.circle.fill" catalog="system" symbolScale="large" renderingMode="template"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KfW-au-3lB">
+                                <rect key="frame" x="248" y="306" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="13E-Rg-tlO"/>
+                                    <constraint firstAttribute="height" constant="44" id="Swu-ui-fyM"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="arrowtriangle.down.circle.fill" catalog="system" symbolScale="large"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jaw-8i-PX4">
+                                <rect key="frame" x="248" y="262" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="V2c-pz-NRv"/>
+                                    <constraint firstAttribute="height" constant="44" id="nF6-si-ltW"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="line.3.crossed.swirl.circle" catalog="system" symbolScale="large" renderingMode="template"/>
+                                </state>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="hke-fJ-4fX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="22M-gB-uKl"/>
                             <constraint firstItem="stR-Rn-UdV" firstAttribute="leading" secondItem="hke-fJ-4fX" secondAttribute="trailing" constant="48" id="4S2-fF-Ta9"/>
+                            <constraint firstAttribute="trailing" secondItem="KfW-au-3lB" secondAttribute="trailing" constant="28" id="7Gf-6e-y92"/>
                             <constraint firstItem="hS2-sy-kuv" firstAttribute="centerY" secondItem="hke-fJ-4fX" secondAttribute="centerY" id="AuI-5x-aKM"/>
+                            <constraint firstAttribute="trailing" secondItem="Jaw-8i-PX4" secondAttribute="trailing" constant="28" id="CeR-Nn-tvQ"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hke-fJ-4fX" secondAttribute="bottom" constant="28" id="HjD-HJ-HzG"/>
+                            <constraint firstItem="Jaw-8i-PX4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="O8K-Ha-MxF"/>
+                            <constraint firstItem="GLY-dx-vLd" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-44" id="S2a-Od-Qde"/>
+                            <constraint firstAttribute="trailing" secondItem="GLY-dx-vLd" secondAttribute="trailing" constant="28" id="d03-F0-mFc"/>
                             <constraint firstItem="hke-fJ-4fX" firstAttribute="leading" secondItem="hS2-sy-kuv" secondAttribute="trailing" constant="48" id="fY6-aF-vVL"/>
                             <constraint firstItem="stR-Rn-UdV" firstAttribute="centerY" secondItem="hke-fJ-4fX" secondAttribute="centerY" id="sJP-2Z-GAn"/>
+                            <constraint firstItem="KfW-au-3lB" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="44" id="yjQ-dk-Ywn"/>
                         </constraints>
                     </view>
                     <connections>
@@ -66,11 +106,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-9" y="81"/>
+            <point key="canvasLocation" x="-9.375" y="80.281690140845072"/>
         </scene>
     </scenes>
     <resources>
-        <image name="flashOutline" width="17.666666030883789" height="30"/>
-        <image name="flipCamera" width="30" height="22.666666030883789"/>
+        <image name="arrowtriangle.down.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="arrowtriangle.up.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="flashOutline" width="18" height="30"/>
+        <image name="flipCamera" width="30" height="23"/>
+        <image name="line.3.crossed.swirl.circle" catalog="system" width="128" height="121"/>
     </resources>
 </document>

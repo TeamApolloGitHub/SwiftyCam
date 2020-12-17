@@ -270,7 +270,7 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Last changed orientation
 
-    fileprivate var orientation                  : Orientation = Orientation()
+    var orientation                  : Orientation = Orientation()
 
     /// Boolean to store when View Controller is notified session is running
 
