@@ -91,18 +91,80 @@
                                     <action selector="resetShutter:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NH4-Yo-opm"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R0e-DO-ao8">
+                                <rect key="frame" x="143.5" y="399" width="33" height="33"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="33" id="NnU-hS-OSS"/>
+                                    <constraint firstAttribute="height" constant="33" id="uPk-oK-Xz4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="1.magnifyingglass" catalog="system" symbolScale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="chooseWideCamera:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9g9-Lb-fWc"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a4g-DL-voR">
+                                <rect key="frame" x="88.5" y="399" width="33" height="33"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="33" id="Eg8-TX-VaT"/>
+                                    <constraint firstAttribute="width" constant="33" id="rbV-I9-srh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="minus.magnifyingglass" catalog="system" symbolScale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="chooseUltraWideCamera:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vBm-TF-O8l"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="78J-0B-bmD">
+                                <rect key="frame" x="198.5" y="399" width="33" height="33"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="33" id="jBA-c4-R1T"/>
+                                    <constraint firstAttribute="height" constant="33" id="zJm-AJ-tXM"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <imageReference key="image" image="plus.magnifyingglass" catalog="system" symbolScale="large"/>
+                                </state>
+                                <connections>
+                                    <action selector="chooseTeleCamera:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7X7-jq-mFG"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ISO/SHUTTER" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CSQ-cn-rT5">
+                                <rect key="frame" x="115.5" y="20" width="89" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="9nh-W1-wpO"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="CSQ-cn-rT5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="1kO-hc-dZ6"/>
                             <constraint firstItem="hke-fJ-4fX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="22M-gB-uKl"/>
                             <constraint firstItem="stR-Rn-UdV" firstAttribute="leading" secondItem="hke-fJ-4fX" secondAttribute="trailing" constant="48" id="4S2-fF-Ta9"/>
                             <constraint firstAttribute="trailing" secondItem="KfW-au-3lB" secondAttribute="trailing" constant="28" id="7Gf-6e-y92"/>
+                            <constraint firstItem="CSQ-cn-rT5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8U7-19-0Vg"/>
                             <constraint firstItem="hS2-sy-kuv" firstAttribute="centerY" secondItem="hke-fJ-4fX" secondAttribute="centerY" id="AuI-5x-aKM"/>
                             <constraint firstAttribute="trailing" secondItem="Jaw-8i-PX4" secondAttribute="trailing" constant="28" id="CeR-Nn-tvQ"/>
+                            <constraint firstItem="a4g-DL-voR" firstAttribute="centerY" secondItem="R0e-DO-ao8" secondAttribute="centerY" id="FrO-7Q-vBs"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hke-fJ-4fX" secondAttribute="bottom" constant="28" id="HjD-HJ-HzG"/>
+                            <constraint firstItem="hke-fJ-4fX" firstAttribute="top" secondItem="R0e-DO-ao8" secondAttribute="bottom" constant="33" id="Ksz-cM-Ch9"/>
                             <constraint firstItem="Jaw-8i-PX4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="O8K-Ha-MxF"/>
+                            <constraint firstItem="R0e-DO-ao8" firstAttribute="leading" secondItem="a4g-DL-voR" secondAttribute="trailing" constant="22" id="RRs-Tn-JcE"/>
                             <constraint firstItem="GLY-dx-vLd" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-44" id="S2a-Od-Qde"/>
+                            <constraint firstItem="78J-0B-bmD" firstAttribute="centerY" secondItem="R0e-DO-ao8" secondAttribute="centerY" id="V8r-3p-bPr"/>
                             <constraint firstAttribute="trailing" secondItem="GLY-dx-vLd" secondAttribute="trailing" constant="28" id="d03-F0-mFc"/>
                             <constraint firstItem="hke-fJ-4fX" firstAttribute="leading" secondItem="hS2-sy-kuv" secondAttribute="trailing" constant="48" id="fY6-aF-vVL"/>
+                            <constraint firstItem="R0e-DO-ao8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fb5-mh-g8F"/>
+                            <constraint firstItem="78J-0B-bmD" firstAttribute="leading" secondItem="R0e-DO-ao8" secondAttribute="trailing" constant="22" id="g8T-eP-e8l"/>
                             <constraint firstItem="stR-Rn-UdV" firstAttribute="centerY" secondItem="hke-fJ-4fX" secondAttribute="centerY" id="sJP-2Z-GAn"/>
                             <constraint firstItem="KfW-au-3lB" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="44" id="yjQ-dk-Ywn"/>
                         </constraints>
@@ -111,6 +173,10 @@
                         <outlet property="captureButton" destination="hke-fJ-4fX" id="nng-T2-6kL"/>
                         <outlet property="flashButton" destination="stR-Rn-UdV" id="WAJ-Ik-VF7"/>
                         <outlet property="flipCameraButton" destination="hS2-sy-kuv" id="lWF-Wl-Vg1"/>
+                        <outlet property="iosAndSpeedALabel" destination="CSQ-cn-rT5" id="c6e-vc-0P9"/>
+                        <outlet property="zoom1_Btn" destination="a4g-DL-voR" id="xKx-SM-bzz"/>
+                        <outlet property="zoom2_Btn" destination="R0e-DO-ao8" id="Hgw-Hu-uUU"/>
+                        <outlet property="zoom3_Btn" destination="78J-0B-bmD" id="65b-Cg-CP8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -119,10 +185,13 @@
         </scene>
     </scenes>
     <resources>
+        <image name="1.magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="arrowtriangle.down.circle.fill" catalog="system" width="128" height="121"/>
         <image name="arrowtriangle.up.circle.fill" catalog="system" width="128" height="121"/>
         <image name="circle.lefthalf.fill" catalog="system" width="128" height="121"/>
         <image name="flashOutline" width="18" height="30"/>
         <image name="flipCamera" width="30" height="23"/>
+        <image name="minus.magnifyingglass" catalog="system" width="128" height="115"/>
+        <image name="plus.magnifyingglass" catalog="system" width="128" height="115"/>
     </resources>
 </document>

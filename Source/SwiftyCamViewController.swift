@@ -214,7 +214,8 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Returns the CameraSelection corresponding to the currently utilized camera
 
-	private(set) public var currentCamera        = CameraSelection.rear
+	var currentCamera        = CameraSelection.rear
+    var cameraDeviceType:AVCaptureDevice.DeviceType = .builtInWideAngleCamera
 
 	// MARK: Private Constant Declarations
 
@@ -281,10 +282,6 @@ open class SwiftyCamViewController: UIViewController {
 	override open var shouldAutorotate: Bool {
 		return allowAutoRotate
 	}
-
-	/// Sets output video codec
-    
-    public var videoCodecType: AVVideoCodecType? = nil
     
     
     /// Frame data output
@@ -518,11 +515,8 @@ open class SwiftyCamViewController: UIViewController {
 			flashView?.alpha = 0.85
 			previewLayer.addSubview(flashView!)
 		}
-
-        //Must be fetched before on main thread
-		sessionQueue.async { [unowned self] in
-			
-		}
+        
+        // Recording logic removed, if needed, check out old ones from repository.
 	}
 
 	/**
@@ -562,7 +556,7 @@ open class SwiftyCamViewController: UIViewController {
 	*/
 
 
-	public func switchCamera() {
+    public func switchCamera(_ t:AVCaptureDevice.DeviceType?) {
 		guard isVideoRecording != true else {
 			//TODO: Look into switching camera during video recording
 			log.info("[SwiftyCam]: Switching between cameras while recording video is not supported")
@@ -572,6 +566,7 @@ open class SwiftyCamViewController: UIViewController {
         guard session.isRunning == true else {
             return
         }
+        
 
 		switch currentCamera {
 		case .front:
@@ -579,6 +574,11 @@ open class SwiftyCamViewController: UIViewController {
 		case .rear:
 			currentCamera = .front
 		}
+        
+        if let deviceType = t {
+            self.currentCamera = .rear
+            self.cameraDeviceType = deviceType
+        }
 
 		session.stopRunning()
 
@@ -656,9 +656,9 @@ open class SwiftyCamViewController: UIViewController {
 	fileprivate func addVideoInput() {
 		switch currentCamera {
 		case .front:
-			videoDevice = SwiftyCamViewController.deviceWithMediaType(AVMediaType.video.rawValue, preferringPosition: .front)
+            videoDevice = SwiftyCamViewController.deviceWithMediaType(.video, preferringPosition: .front, deviceType: .builtInWideAngleCamera)
 		case .rear:
-			videoDevice = SwiftyCamViewController.deviceWithMediaType(AVMediaType.video.rawValue, preferringPosition: .back)
+            videoDevice = SwiftyCamViewController.deviceWithMediaType(.video, preferringPosition: .back, deviceType: self.cameraDeviceType)
 		}
         
 //        CameraUtil.dumpAllFormats(with: videoDevice!.formats)
@@ -835,18 +835,19 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Get Devices
 
-	fileprivate class func deviceWithMediaType(_ mediaType: String, preferringPosition position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+    fileprivate class func deviceWithMediaType(_ mediaType: AVMediaType, preferringPosition position: AVCaptureDevice.Position, deviceType t:AVCaptureDevice.DeviceType) -> AVCaptureDevice? {
 		if #available(iOS 10.0, *) {
-            if let avDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera, for: AVMediaType(rawValue: mediaType), position: position) {
+            if let avDevice = AVCaptureDevice.default(t, for: mediaType, position: position) {
+                log.info("will use camera \(avDevice) for device type: \(t.rawValue)")
 				return avDevice
             }
 		}
         
         // Fallback on earlier versions
-        let avDevice = AVCaptureDevice.devices(for: AVMediaType(rawValue: mediaType))
+        let avDevice = AVCaptureDevice.devices(for: mediaType)
         var avDeviceNum = 0
         for device in avDevice {
-                log.info("deviceWithMediaType Position: \(device.position.rawValue)")
+                log.info("device found at position: \(device.position.rawValue)")
                 if device.position == position {
                         break
                 } else {
@@ -1083,7 +1084,7 @@ extension SwiftyCamViewController {
 		guard doubleTapCameraSwitch == true else {
 			return
 		}
-		switchCamera()
+		switchCamera(nil)
 	}
 
     @objc private func panGesture(pan: UIPanGestureRecognizer) {

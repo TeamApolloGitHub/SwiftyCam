@@ -24,8 +24,47 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     @IBOutlet weak var flipCameraButton : UIButton!
     @IBOutlet weak var flashButton      : UIButton!
     
+    
+    @IBOutlet weak var zoom1_Btn    : UIButton!
+    @IBOutlet weak var zoom2_Btn    : UIButton!
+    @IBOutlet weak var zoom3_Btn    : UIButton!
+    
     @IBOutlet private weak var iosAndSpeedALabel: UILabel?
     private var exposureSetItem:DispatchWorkItem?
+    
+    let backCameraOpts = [
+        AVCaptureDevice.DeviceType.builtInUltraWideCamera,
+        AVCaptureDevice.DeviceType.builtInWideAngleCamera,
+        AVCaptureDevice.DeviceType.builtInTelephotoCamera,
+    ]
+
+    private func toggleBackCameraBtns() {
+        let btns = [self.zoom1_Btn, self.zoom2_Btn, self.zoom3_Btn]
+        
+        if currentCamera == .front {
+            for btn in btns {
+                btn?.isHidden = true
+            }
+            
+            return
+        }
+        
+        var idx = 0
+        for t in self.backCameraOpts {
+            if let camera = AVCaptureDevice.default(t, for: .video, position: .back) {
+                let btn = btns[idx]!
+                btn.isHidden = false
+                if (camera.deviceType == self.videoDevice?.deviceType) {
+                    btn.tintColor = UIColor.yellow
+                } else {
+                    btn.tintColor = UIColor.lightGray
+                }
+            } else {
+                btns[idx]?.isHidden = true
+            }
+            idx += 1
+        }
+    }
     
     private var saveThisFrame = false
     private var workOnSaving = false
@@ -58,6 +97,8 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     func swiftyCamSessionDidStartRunning(_ swiftyCam: SwiftyCamViewController) {
         log.info("Session did start running")
         captureButton.buttonEnabled = true
+        
+        self.toggleBackCameraBtns()
     }
     
     func swiftyCamSessionDidStopRunning(_ swiftyCam: SwiftyCamViewController) {
@@ -115,7 +156,7 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     }
 
     @IBAction func cameraSwitchTapped(_ sender: Any) {
-        switchCamera()
+        switchCamera(nil)
     }
     
     @IBAction func toggleFlashTapped(_ sender: Any) {
@@ -277,6 +318,17 @@ extension HlgCamViewController {
 
 
 extension HlgCamViewController {
+    @IBAction func chooseUltraWideCamera(_ sender:Any) {
+        self.switchCamera(.builtInUltraWideCamera)
+    }
+    
+    @IBAction func chooseWideCamera(_ sender:Any) {
+        self.switchCamera(.builtInWideAngleCamera)
+    }
+    
+    @IBAction func chooseTeleCamera(_ sender:Any) {
+        self.switchCamera(.builtInTelephotoCamera)
+    }
     
     @IBAction func chooseFasterShutter(_ sender:Any) {
         self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
