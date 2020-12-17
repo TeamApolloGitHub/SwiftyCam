@@ -224,7 +224,7 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Serial queue used for setting up session
 
-	fileprivate let sessionQueue                 = DispatchQueue(label: "sessionQueue", attributes: [])
+	let sessionQueue                 = DispatchQueue(label: "sessionQueue", attributes: [])
 
 	// MARK: Private Variable Declarations
 
@@ -254,7 +254,7 @@ open class SwiftyCamViewController: UIViewController {
 
 	/// Video Device variable
 
-	fileprivate var videoDevice                  : AVCaptureDevice?
+	var videoDevice                  : AVCaptureDevice?
 
 	/// PreviewView for the capture session
 
@@ -837,12 +837,8 @@ open class SwiftyCamViewController: UIViewController {
 
 	fileprivate class func deviceWithMediaType(_ mediaType: String, preferringPosition position: AVCaptureDevice.Position) -> AVCaptureDevice? {
 		if #available(iOS 10.0, *) {
-            if let avDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInTripleCamera, for: AVMediaType(rawValue: mediaType), position: position) {
+            if let avDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInWideAngleCamera, for: AVMediaType(rawValue: mediaType), position: position) {
 				return avDevice
-            }
-            
-            if let avDevice = AVCaptureDevice.default(AVCaptureDevice.DeviceType.builtInDualCamera, for: AVMediaType(rawValue: mediaType), position: position) {
-                return avDevice
             }
 		}
         

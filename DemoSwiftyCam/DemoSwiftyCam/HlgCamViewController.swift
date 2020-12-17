@@ -24,6 +24,9 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     @IBOutlet weak var flipCameraButton : UIButton!
     @IBOutlet weak var flashButton      : UIButton!
     
+    @IBOutlet private weak var iosAndSpeedALabel: UILabel?
+    private var exposureSetItem:DispatchWorkItem?
+    
     private var saveThisFrame = false
     private var workOnSaving = false
     
@@ -212,6 +215,11 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         }
         
         self.saveThisFrame = true
+        self.captureButton.growButton()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            self.captureButton.shrinkButton()
+        }
     }
 }
 
@@ -267,3 +275,128 @@ extension HlgCamViewController {
     }
 }
 
+
+extension HlgCamViewController {
+    
+    @IBAction func chooseFasterShutter(_ sender:Any) {
+        self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
+        
+        self.adjustExposure(-1)
+    }
+    
+    
+    @IBAction func chooseSlowerShutter(_ sender:Any) {
+        self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
+        
+        self.adjustExposure(1)
+    }
+    
+    
+    
+    @IBAction func resetShutter(_ sender:Any) {
+        self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
+        
+        self.adjustExposure(0)
+    }
+    
+    private func chooseProperISO(_ target:Float, of device:AVCaptureDevice) -> Float {
+        if (target < device.activeFormat.minISO) {
+            return device.activeFormat.minISO
+        }
+        
+        if (target > device.activeFormat.maxISO) {
+            return device.activeFormat.maxISO
+        }
+        
+        return target
+    }
+    
+    private func chooseProperShutterSpeed(_ target:CMTime, of device:AVCaptureDevice) -> CMTime {
+        let speed = Double(Double(target.value)/Double(target.timescale))
+        
+        let min = device.activeFormat.minExposureDuration
+        let minSpeed = Double(Double(min.value)/Double(min.timescale))
+        
+        let max = device.activeFormat.maxExposureDuration
+        let maxSpeed = Double(Double(max.value)/Double(max.timescale))
+        
+        log.info("min: \(minSpeed), max: \(maxSpeed), target: \(speed)")
+        
+        if (speed < minSpeed) {
+            return min
+        }
+        
+        if (speed > maxSpeed) {
+            return max
+        }
+        
+        return target
+    }
+    
+    private func adjustExposure(_ relativeExp:Int) {
+        if let _ = self.exposureSetItem {
+            return
+        }
+        
+        self.exposureSetItem = DispatchWorkItem(block: {
+            defer {
+                self.exposureSetItem = nil
+            }
+            
+            guard let captureDevice = self.videoDevice else {
+                return
+            }
+            
+            do {
+                try captureDevice.lockForConfiguration()
+                
+                if (relativeExp == 0) {
+                    captureDevice.exposureMode = .continuousAutoExposure
+                } else {
+                    var iso = captureDevice.iso, shutter = captureDevice.exposureDuration
+                    
+                    if (relativeExp < 0) {//increase shutter speed
+                        iso = iso * 2
+                        shutter.value = shutter.value/2
+                    } else {//decrease shutter speed
+                        iso = iso / 2
+                        shutter.value = shutter.value*2
+                    }
+                    
+                    iso = self.chooseProperISO(iso, of: captureDevice)
+                    shutter = self.chooseProperShutterSpeed(shutter, of: captureDevice)
+                    
+                    log.info("locked exposure supported? \(captureDevice.isExposureModeSupported(.locked))")
+                    log.info("autoExpose exposure supported? \(captureDevice.isExposureModeSupported(.autoExpose))")
+                    log.info("continuousAutoExposure exposure supported? \(captureDevice.isExposureModeSupported(.continuousAutoExposure))")
+                    log.info("custom exposure supported? \(captureDevice.isExposureModeSupported(.custom))")
+                    captureDevice.exposureMode = .custom
+                    
+                    if (captureDevice.isExposureModeSupported(.custom)) {//not working
+                        captureDevice.setExposureModeCustom(duration: shutter, iso: iso) { (exp:CMTime) in
+                            DispatchQueue.main.async {
+                                self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
+                            }
+                        }
+                    }
+                    
+                }
+                captureDevice.unlockForConfiguration()
+            } catch {
+                log.warning("configure for exposure failed: \(error)")
+            }
+        })
+        
+        sessionQueue.async(execute:self.exposureSetItem!)
+    }
+    
+    private func formatISO_ShutterSpeed() -> String {
+        var iso = 0, shutter = 0
+        if let device = self.videoDevice {
+            iso = Int(device.iso)
+            let t = device.exposureDuration
+            shutter = Int((Int64(t.timescale)/t.value))
+        }
+        return "ISO: \(iso)/SHUTTER: 1/\(shutter)"
+    }
+}
