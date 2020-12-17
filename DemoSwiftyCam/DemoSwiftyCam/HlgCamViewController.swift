@@ -51,16 +51,17 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         
         var idx = 0
         for t in self.backCameraOpts {
+            let btn = btns[idx]!
             if let camera = AVCaptureDevice.default(t, for: .video, position: .back) {
-                let btn = btns[idx]!
-                btn.isHidden = false
+                btn.isEnabled = true
                 if (camera.deviceType == self.videoDevice?.deviceType) {
                     btn.tintColor = UIColor.yellow
                 } else {
                     btn.tintColor = UIColor.lightGray
                 }
             } else {
-                btns[idx]?.isHidden = true
+                btn.isEnabled = false
+                btn.tintColor = UIColor.darkGray
             }
             idx += 1
         }
