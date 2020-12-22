@@ -207,6 +207,7 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
 //        log.info("got sample buffer: \(sampleBuffer)")
         
         self.vtbCompressor = VideoToolBoxCompressor()
+        
         self.vtbCompressor?.expectingSingleFrame = true
         self.vtbCompressor?.compressQuality = UserDefaults.standard.double(forKey: "quality_preference")
         self.vtbCompressor?.forceAVCCodec = UserDefaults.standard.bool(forKey: "avc_preference")

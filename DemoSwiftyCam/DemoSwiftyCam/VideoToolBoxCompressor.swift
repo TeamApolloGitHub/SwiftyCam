@@ -111,7 +111,7 @@ class VideoToolBoxCompressor : NSObject {
         let status = VTCompressionSessionCreate(allocator: kCFAllocatorDefault,
                                                 width: Int32(width),
                                                 height: Int32(height),
-                                                codecType: MediaUtil.hasHEVCHardwareEncoder ? kCMVideoCodecType_HEVC : kCMVideoCodecType_H264,
+                                                codecType: (MediaUtil.hasHEVCHardwareEncoder && !self.forceAVCCodec) ? kCMVideoCodecType_HEVC : kCMVideoCodecType_H264,
                                                 encoderSpecification: nil,
                                                 imageBufferAttributes: nil,
                                                 compressedDataAllocator: nil,
@@ -133,7 +133,7 @@ class VideoToolBoxCompressor : NSObject {
         
         self.lastFrameTime = CMSampleBufferGetOutputPresentationTimeStamp(sampleBuf)
         
-        if MediaUtil.hasHEVCHardwareEncoder {
+        if (MediaUtil.hasHEVCHardwareEncoder && !self.forceAVCCodec) {
             VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ProfileLevel, value: kVTProfileLevel_HEVC_Main10_AutoLevel)
         } else {
             VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ProfileLevel, value: kVTProfileLevel_H264_High_AutoLevel)
