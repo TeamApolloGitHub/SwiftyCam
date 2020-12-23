@@ -49,17 +49,74 @@ func compressionOutputCallback(outputCallbackRefCon: UnsafeMutableRawPointer?,
     vc.writeCompressedFrame(frame: sampleBuffer)
 }
 
+enum HDRProfile {
+    case SDR, HLG, PQ
+}
+
+enum CodecProfile {
+    case HEVC10, HEVC, AVC
+}
+
 class VideoToolBoxCompressor : NSObject {
     
     public var expectingSingleFrame = false
+    let singleFrameDuration = 3//seconds
+    public var saveExtraStillImageFrame = false
     
-    public var compressQuality = 0.5
-    public var forceAVCCodec = false
+    public var hdrProfile:HDRProfile = .HLG
+    public var codecProfile:CodecProfile = .HEVC10
+    
+    public var compressQuality = 0.7
+    
+    private func codecTypeValueForCurrentSetting() -> CMVideoCodecType {
+        if (!MediaUtil.hasHEVCHardwareEncoder) {
+            return kCMVideoCodecType_H264
+        }
+        switch (self.codecProfile) {
+        case .HEVC10:
+            return kCMVideoCodecType_HEVC
+        case .HEVC:
+            return kCMVideoCodecType_HEVC
+        case .AVC:
+            return kCMVideoCodecType_H264
+        }
+    }
+    
+    
+    private func codecProfileValueForCurrentSetting() -> CFString {
+        if (!MediaUtil.hasHEVCHardwareEncoder) {
+            return kVTProfileLevel_H264_High_AutoLevel
+        }
+        switch (self.codecProfile) {
+        case .HEVC10:
+            return kVTProfileLevel_HEVC_Main10_AutoLevel
+        case .HEVC:
+            return kVTProfileLevel_HEVC_Main_AutoLevel
+        case .AVC:
+            return kVTProfileLevel_H264_High_AutoLevel
+        }
+    }
+    
+    public var videoTransformSetting:CGAffineTransform? = nil
     
     public var imageOrientOpt:UIImage.Orientation = .up
     public var videoOrientOpt:AVCaptureVideoOrientation = .landscapeLeft
     
-    private var frameCount = 0
+    private(set) var frameCount = 0
+    
+    func readAppendingFramesCountProperty() -> Int {
+        guard let _ = self.compressionSession else {
+            return Int.max
+        }
+        
+        var out = NSNumber(integerLiteral: 0)
+        guard VTSessionCopyProperty(self.compressionSession!, key:kVTCompressionPropertyKey_NumberOfPendingFrames, allocator:nil, valueOut:&out) == noErr else {
+            return Int.max
+        }
+        
+        return out.intValue
+        
+    }
     
     private var lastFrameTime = CMTimeMake(value:0, timescale:600)
     
@@ -111,7 +168,7 @@ class VideoToolBoxCompressor : NSObject {
         let status = VTCompressionSessionCreate(allocator: kCFAllocatorDefault,
                                                 width: Int32(width),
                                                 height: Int32(height),
-                                                codecType: (MediaUtil.hasHEVCHardwareEncoder && !self.forceAVCCodec) ? kCMVideoCodecType_HEVC : kCMVideoCodecType_H264,
+                                                codecType: self.codecTypeValueForCurrentSetting(),
                                                 encoderSpecification: nil,
                                                 imageBufferAttributes: nil,
                                                 compressedDataAllocator: nil,
@@ -133,18 +190,19 @@ class VideoToolBoxCompressor : NSObject {
         
         self.lastFrameTime = CMSampleBufferGetOutputPresentationTimeStamp(sampleBuf)
         
-        if (MediaUtil.hasHEVCHardwareEncoder && !self.forceAVCCodec) {
-            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ProfileLevel, value: kVTProfileLevel_HEVC_Main10_AutoLevel)
-        } else {
-            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ProfileLevel, value: kVTProfileLevel_H264_High_AutoLevel)
-        }
         
-        if self.forceAVCCodec {
-            log.info("force AVC codec.")
-            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ProfileLevel, value: kVTProfileLevel_H264_High_AutoLevel)
-        }
+        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ProfileLevel, value: self.codecProfileValueForCurrentSetting())
+        
         // if capture frame stream from camera, set to true, else
         VTSessionSetProperty(c, key: kVTCompressionPropertyKey_RealTime, value: false as CFTypeRef)
+        
+        ///TODO  not working now.
+//        if (self.expectingSingleFrame) {
+//            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: 1 as CFTypeRef)
+//        } else {
+//            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: 3 as CFTypeRef)
+//        }
+        
         VTSessionSetProperty(c, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: 1 as CFTypeRef)
         
         // bitrates & quality control
@@ -152,11 +210,28 @@ class VideoToolBoxCompressor : NSObject {
 //        print("target bit rate: \(bitRate/1000/1000)Mbps")
 //        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_AverageBitRate, value: bitRate as CFTypeRef)
         VTSessionSetProperty(c, key: kVTCompressionPropertyKey_Quality, value: self.compressQuality as CFTypeRef)
-//        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_DataRateLimits, value: [100*1024*1024, 1] as CFArray)
+//        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_DataRateLimits, value: [80*1024*1024, 1] as CFArray)
 //        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ExpectedFrameRate, value: 3 as CFTypeRef)
-        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ColorPrimaries, value: kCMFormatDescriptionColorPrimaries_ITU_R_2020)
-        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_TransferFunction, value: kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG)
-        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_YCbCrMatrix, value: kCMFormatDescriptionYCbCrMatrix_ITU_R_2020)
+        
+        switch self.hdrProfile {
+        case .HLG:
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ColorPrimaries, value: kCMFormatDescriptionColorPrimaries_ITU_R_2020)
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_TransferFunction, value: kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG)
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_YCbCrMatrix, value: kCMFormatDescriptionYCbCrMatrix_ITU_R_2020)
+            break
+        case .PQ:
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ColorPrimaries, value: kCMFormatDescriptionColorPrimaries_ITU_R_2020)
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_TransferFunction, value: kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ)
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_YCbCrMatrix, value: kCMFormatDescriptionYCbCrMatrix_ITU_R_2020)
+            break
+        case .SDR:
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ColorPrimaries, value: kCMFormatDescriptionColorPrimaries_ITU_R_709_2)
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_TransferFunction, value: kCMFormatDescriptionTransferFunction_ITU_R_709_2)
+            VTSessionSetProperty(c, key: kVTCompressionPropertyKey_YCbCrMatrix, value: kCMFormatDescriptionYCbCrMatrix_ITU_R_709_2)
+            break
+        }
+        
+        
         //if HLG, false; if P3_D65, true.
         VTSessionSetProperty(c, key: kCMFormatDescriptionExtension_FullRangeVideo, value: false as CFTypeRef)
         
@@ -173,7 +248,11 @@ class VideoToolBoxCompressor : NSObject {
             
             //outputSettings = nil => no compression, buffer is in compressed state already.
             self.assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: nil)
-            self.assetWriterInput?.transform = self.getVideoTransform()
+            if let trans = self.videoTransformSetting {
+                self.assetWriterInput?.transform = trans
+            } else {
+                self.assetWriterInput?.transform = self.getVideoTransform()
+            }
             
             guard let writer = assetWriter, let writerInput = assetWriterInput else {
                 throw VideoCompressionError.NotSupported
@@ -211,14 +290,34 @@ class VideoToolBoxCompressor : NSObject {
         
         self.compressionQueue.async {
              pixelBuffer.lock(.readwrite) {
-                 let duration = CMSampleBufferGetOutputDuration(sampleBuf)
-                 VTCompressionSessionEncodeFrame(c,
-                                                 imageBuffer: pixelBuffer,
-                                                 presentationTimeStamp: self.lastFrameTime,
-                                                 duration: duration,
-                                                 frameProperties: nil,
-                                                 sourceFrameRefcon: nil,
-                                                 infoFlagsOut: nil)
+                var duration = CMTime.invalid//CMSampleBufferGetOutputDuration(sampleBuf)
+                
+                if self.expectingSingleFrame {
+                    duration = CMTime(value: Int64(t.timescale)*Int64(self.singleFrameDuration), timescale: t.timescale)
+                    log.info("frame presentation time: \(t.value)/\(t.timescale)")
+                    log.info("frame duration: \(duration.value)/\(duration.timescale) second(s)")
+                }
+                
+                let result = VTCompressionSessionEncodeFrame(c,
+                                                             imageBuffer: pixelBuffer,
+                                                             presentationTimeStamp: self.lastFrameTime,
+                                                             duration: duration,
+                                                             frameProperties: nil,
+                                                             sourceFrameRefcon: nil,
+                                                             infoFlagsOut: nil)
+                
+                if (result != noErr) {
+                    log.warning("submit frame to encoder failed: \(result.codeString)")
+                }
+                
+                
+                if !self.expectingSingleFrame {
+                    return
+                }
+                
+                if !self.saveExtraStillImageFrame {
+                    return
+                }
                 
                 
                 // Create a CIImage from the pixel buffer and apply a filter
@@ -259,6 +358,7 @@ class VideoToolBoxCompressor : NSObject {
         self.compressionQueue.async {
             VTCompressionSessionCompleteFrames(c, untilPresentationTimeStamp: CMTime.invalid)
             VTCompressionSessionInvalidate(c)
+            
             self.compressionSession = nil
             
             self.writingQueue.async {
@@ -266,7 +366,7 @@ class VideoToolBoxCompressor : NSObject {
                 wi.markAsFinished()
                 var t = self.lastFrameTime
                 if (self.expectingSingleFrame) {
-                    t = CMTimeMakeWithSeconds(CMTimeGetSeconds(t) + 3, preferredTimescale: t.timescale)
+                    t = CMTimeMakeWithSeconds(CMTimeGetSeconds(t) + Double(self.singleFrameDuration), preferredTimescale: t.timescale)
                 }
                 w.endSession(atSourceTime: t)
                 

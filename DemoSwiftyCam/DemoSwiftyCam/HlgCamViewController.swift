@@ -209,15 +209,15 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         self.vtbCompressor = VideoToolBoxCompressor()
         
         self.vtbCompressor?.expectingSingleFrame = true
-        self.vtbCompressor?.compressQuality = UserDefaults.standard.double(forKey: "quality_preference")
-        self.vtbCompressor?.forceAVCCodec = UserDefaults.standard.bool(forKey: "avc_preference")
+        self.vtbCompressor?.saveExtraStillImageFrame = true
+        self.vtbCompressor?.compressQuality = 0.9
         
         self.vtbCompressor?.imageOrientOpt =  self.orientation.getImageOrientation(forCamera: self.currentCamera)
         self.vtbCompressor?.videoOrientOpt = self.orientation.getVideoOrientation()!
         
         log.info("image orientation: \(self.vtbCompressor!.imageOrientOpt.rawValue)")
         log.info("video orientation: \(self.vtbCompressor!.videoOrientOpt.rawValue)")
-        log.info("compress quality: \(self.vtbCompressor!.compressQuality), force AVC: \(self.vtbCompressor!.forceAVCCodec)")
+        log.info("compress quality: \(self.vtbCompressor!.compressQuality), force AVC: \(String(describing: self.vtbCompressor?.codecProfile))")
         
         self.vtbCompressor?.vtbPrepareEncoding(for: sampleBuffer, completion: { (e) in
             if let error = e {
