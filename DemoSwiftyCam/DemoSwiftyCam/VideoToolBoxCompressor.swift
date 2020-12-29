@@ -60,13 +60,13 @@ enum CodecProfile {
 class VideoToolBoxCompressor : NSObject {
     
     public var expectingSingleFrame = false
-    let singleFrameDuration = 3//seconds
+    let singleFrameDuration = 1//seconds
     public var saveExtraStillImageFrame = false
     
     public var hdrProfile:HDRProfile = .HLG
     public var codecProfile:CodecProfile = .HEVC10
     
-    public var compressQuality = 0.7
+    public var compressQuality = 0.95
     
     private func codecTypeValueForCurrentSetting() -> CMVideoCodecType {
         if (!MediaUtil.hasHEVCHardwareEncoder) {
