@@ -332,6 +332,15 @@ extension HlgCamViewController {
         self.switchCamera(.builtInTelephotoCamera)
     }
     
+    @IBAction func chooseLeftExpBias(_ sender:Any) {
+        self.adjustExposureBias(-1)
+    }
+    
+    @IBAction func chooseRightExpBias(_ sender:Any) {
+        self.adjustExposureBias(1)
+    }
+    
+    
     @IBAction func chooseFasterShutter(_ sender:Any) {
         self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
         
@@ -360,6 +369,21 @@ extension HlgCamViewController {
         
         if (target > device.activeFormat.maxISO) {
             return device.activeFormat.maxISO
+        }
+        
+        return target
+    }
+    
+    private func chooseProperExpBias(_ target:Float, of device:AVCaptureDevice) -> Float {
+        let minBias = device.minExposureTargetBias
+        let maxBias = device.maxExposureTargetBias
+        
+        if (target < minBias) {
+            return minBias
+        }
+        
+        if (target > maxBias) {
+            return maxBias
         }
         
         return target
@@ -426,7 +450,7 @@ extension HlgCamViewController {
                     log.info("custom exposure supported? \(captureDevice.isExposureModeSupported(.custom))")
                     captureDevice.exposureMode = .custom
                     
-                    if (captureDevice.isExposureModeSupported(.custom)) {//not working
+                    if (captureDevice.isExposureModeSupported(.custom)) {//not working with virtual dual/triple camera.
                         captureDevice.setExposureModeCustom(duration: shutter, iso: iso) { (exp:CMTime) in
                             DispatchQueue.main.async {
                                 self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
@@ -438,6 +462,54 @@ extension HlgCamViewController {
                 captureDevice.unlockForConfiguration()
             } catch {
                 log.warning("configure for exposure failed: \(error)")
+            }
+        })
+        
+        sessionQueue.async(execute:self.exposureSetItem!)
+    }
+    
+    // -1, 0, 1
+    private func adjustExposureBias(_ targetExpBias:Int) {
+        if let _ = self.exposureSetItem {
+            return
+        }
+        
+        self.exposureSetItem = DispatchWorkItem(block: {
+            defer {
+                self.exposureSetItem = nil
+            }
+            
+            guard let captureDevice = self.videoDevice else {
+                return
+            }
+            
+            do {
+                try captureDevice.lockForConfiguration()
+                var currentBias = captureDevice.exposureTargetBias
+                
+                if (targetExpBias == 0) {
+                    currentBias = 0
+                    captureDevice.exposureMode  = .continuousAutoExposure
+                } else if (targetExpBias > 0) {
+                    currentBias += 1.0/3
+                    captureDevice.exposureMode  = .autoExpose
+                } else {
+                    currentBias -= 1.0/3
+                    captureDevice.exposureMode  = .autoExpose
+                }
+                
+                log.info("set exposure bias to \(currentBias)")
+                currentBias = self.chooseProperExpBias(currentBias, of: captureDevice)
+                
+                captureDevice.setExposureTargetBias(currentBias) { (exp) in
+                    DispatchQueue.main.async {
+                        self.iosAndSpeedALabel?.text = self.formatISO_ShutterSpeed()
+                    }
+                }
+                
+                captureDevice.unlockForConfiguration()
+            } catch {
+                log.warning("configure for exposure bias failed: \(error)")
             }
         })
         
