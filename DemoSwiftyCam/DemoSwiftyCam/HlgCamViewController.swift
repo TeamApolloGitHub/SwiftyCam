@@ -68,7 +68,6 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     }
     
     private var saveThisFrame = false
-    private var workOnSaving = false
     
     private var vtbCompressor:VideoToolBoxCompressor? = nil
     private var vtbFailureAlert:Bool = false
@@ -193,7 +192,7 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     
     public func swiftyCamCaptureOutput(_ output:AVCaptureOutput, didOutput sampleBuffer:CMSampleBuffer, from connection:AVCaptureConnection) {
         
-        if (self.workOnSaving) {
+        if let _ = self.vtbCompressor {
             return
         }
         
@@ -201,12 +200,11 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
             return
         }
         
-        self.workOnSaving = true
         self.saveThisFrame = false
+        self.vtbCompressor = VideoToolBoxCompressor()
         
 //        log.info("got sample buffer: \(sampleBuffer)")
         
-        self.vtbCompressor = VideoToolBoxCompressor()
         
         self.vtbCompressor?.expectingSingleFrame = true
         self.vtbCompressor?.saveExtraStillImageFrame = true
@@ -220,6 +218,12 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         log.info("compress quality: \(self.vtbCompressor!.compressQuality), force AVC: \(String(describing: self.vtbCompressor?.codecProfile))")
         
         self.vtbCompressor?.vtbPrepareEncoding(for: sampleBuffer, completion: { (e) in
+            
+            defer {
+                DispatchQueue.main.async {
+                    self.vtbCompressor = nil
+                }
+            }
             if let error = e {
                 log.error("failed to save pixel buffer as mov file: \(error)")
                 if (self.vtbFailureAlert) {
@@ -248,12 +252,10 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         
         self.vtbCompressor?.vtbEncodeFrame(buffer: sampleBuffer)
         self.vtbCompressor?.vtbFinishEncoding()
-        
-        self.workOnSaving = false
     }
     
     override public func buttonWasTapped() {
-        if (self.workOnSaving) {
+        if let _ = self.vtbCompressor {
             return
         }
         
