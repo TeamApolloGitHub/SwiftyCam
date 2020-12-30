@@ -556,14 +556,16 @@ open class SwiftyCamViewController: UIViewController {
 	*/
 
 
-    public func switchCamera(_ t:AVCaptureDevice.DeviceType?) {
+    public func switchCamera(_ t:AVCaptureDevice.DeviceType?, completion: @escaping(Bool) -> ()) {
 		guard isVideoRecording != true else {
 			//TODO: Look into switching camera during video recording
 			log.info("[SwiftyCam]: Switching between cameras while recording video is not supported")
+            completion(false)
 			return
 		}
 
         guard session.isRunning == true else {
+            completion(false)
             return
         }
         
@@ -597,6 +599,7 @@ open class SwiftyCamViewController: UIViewController {
             
             CameraUtil.setHighestVideoCaptureMode(with: self.videoDevice!)
 			self.session.startRunning()
+            completion(true)
 		}
 
 		// If flash is enabled, disable it as the torch is needed for front facing camera
@@ -758,7 +761,7 @@ open class SwiftyCamViewController: UIViewController {
 		return image
 	}
 
-	fileprivate func capturePhotoAsyncronously(completionHandler: @escaping(Bool) -> ()) {
+    fileprivate func capturePhotoAsyncronously(completionHandler: @escaping(Bool) -> ()) {
 
         guard sessionRunning == true else {
             log.info("[SwiftyCam]: Cannot take photo. Capture session is not running")
@@ -1084,7 +1087,7 @@ extension SwiftyCamViewController {
 		guard doubleTapCameraSwitch == true else {
 			return
 		}
-		switchCamera(nil)
+        switchCamera(nil, completion: {_ in })
 	}
 
     @objc private func panGesture(pan: UIPanGestureRecognizer) {
