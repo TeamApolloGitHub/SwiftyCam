@@ -25,7 +25,6 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     
     @IBOutlet weak var captureButton    : SwiftyRecordButton!
     @IBOutlet weak var flipCameraButton : UIButton!
-    @IBOutlet weak var flashButton      : UIButton!
     
     
     @IBOutlet weak var zoom1_Btn    : UIButton!
@@ -40,6 +39,8 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         AVCaptureDevice.DeviceType.builtInWideAngleCamera,
         AVCaptureDevice.DeviceType.builtInTelephotoCamera,
     ]
+    
+    var availableCameraOpts:Array<AVCaptureDevice.DeviceType> = Array<AVCaptureDevice.DeviceType>()
 
     private func toggleBackCameraBtns() {
         let btns = [self.zoom1_Btn, self.zoom2_Btn, self.zoom3_Btn]
@@ -53,25 +54,29 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         }
         
         var idx = 0
+        availableCameraOpts.removeAll()
         for t in self.backCameraOpts {
             let btn = btns[idx]!
-            if let camera = AVCaptureDevice.default(t, for: .video, position: .back) {
-                btn.isEnabled = true
-                if (camera.deviceType == self.videoDevice?.deviceType) {
-                    btn.tintColor = UIColor.yellow
-                } else {
-                    btn.tintColor = UIColor.lightGray
-                }
+            if let _ = AVCaptureDevice.default(t, for: .video, position: .back) {
+                availableCameraOpts.append(t)
+            }
+            
+            if (self.videoDevice?.deviceType == t) {
+                btn.isHidden = false
             } else {
-                btn.isEnabled = false
-                btn.tintColor = UIColor.darkGray
+                btn.isHidden = true
             }
             idx += 1
+        }
+        
+        if (availableCameraOpts.count <= 1) {
+            for btn in btns {
+                btn?.isHidden = true
+            }
         }
     }
     
     private var saveThisFrame = false
-    private var workOnSaving = false
     
     private var vtbCompressor:VideoToolBoxCompressor? = nil
     private var vtbFailureAlert:Bool = false
@@ -82,10 +87,9 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
 		cameraDelegate = self
 		maximumVideoDuration = 10.0
         shouldUseDeviceOrientation = true
-        allowAutoRotate = false
+        allowAutoRotate = true
         audioEnabled = true
         flashMode = .auto
-        flashButton.setImage(#imageLiteral(resourceName: "flashauto"), for: UIControl.State())
         captureButton.buttonEnabled = false
 	}
 
@@ -160,13 +164,9 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     }
 
     @IBAction func cameraSwitchTapped(_ sender: Any) {
-        switchCamera(nil)
+        switchCamera(nil, completion: {_ in })
     }
     
-    @IBAction func toggleFlashTapped(_ sender: Any) {
-        //flashEnabled = !flashEnabled
-        toggleFlashAnimation()
-    }
     
     private func saveFrameMovToCameraRoll(movFile:URL, pngFile:URL) {
         // Check the authorization status.
@@ -196,7 +196,7 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     
     public func swiftyCamCaptureOutput(_ output:AVCaptureOutput, didOutput sampleBuffer:CMSampleBuffer, from connection:AVCaptureConnection) {
         
-        if (self.workOnSaving) {
+        if let _ = self.vtbCompressor {
             return
         }
         
@@ -204,12 +204,11 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
             return
         }
         
-        self.workOnSaving = true
         self.saveThisFrame = false
+        self.vtbCompressor = VideoToolBoxCompressor()
         
 //        log.info("got sample buffer: \(sampleBuffer)")
         
-        self.vtbCompressor = VideoToolBoxCompressor()
         
         self.vtbCompressor?.expectingSingleFrame = true
         self.vtbCompressor?.saveExtraStillImageFrame = true
@@ -223,6 +222,12 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         log.info("compress quality: \(self.vtbCompressor!.compressQuality), force AVC: \(String(describing: self.vtbCompressor?.codecProfile))")
         
         self.vtbCompressor?.vtbPrepareEncoding(for: sampleBuffer, completion: { (e) in
+            
+            defer {
+                DispatchQueue.main.async {
+                    self.vtbCompressor = nil
+                }
+            }
             if let error = e {
                 log.error("failed to save pixel buffer as mov file: \(error)")
                 if (self.vtbFailureAlert) {
@@ -251,12 +256,10 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
         
         self.vtbCompressor?.vtbEncodeFrame(buffer: sampleBuffer)
         self.vtbCompressor?.vtbFinishEncoding()
-        
-        self.workOnSaving = false
     }
     
     override public func buttonWasTapped() {
-        if (self.workOnSaving) {
+        if let _ = self.vtbCompressor {
             return
         }
         
@@ -275,14 +278,12 @@ extension HlgCamViewController {
     
     fileprivate func hideButtons() {
         UIView.animate(withDuration: 0.25) {
-            self.flashButton.alpha = 0.0
             self.flipCameraButton.alpha = 0.0
         }
     }
     
     fileprivate func showButtons() {
         UIView.animate(withDuration: 0.25) {
-            self.flashButton.alpha = 1.0
             self.flipCameraButton.alpha = 1.0
         }
     }
@@ -306,34 +307,36 @@ extension HlgCamViewController {
         }
     }
     
-    fileprivate func toggleFlashAnimation() {
-        //flashEnabled = !flashEnabled
-        if flashMode == .auto{
-            flashMode = .on
-            flashButton.setImage(#imageLiteral(resourceName: "flash"), for: UIControl.State())
-        }else if flashMode == .on{
-            flashMode = .off
-            flashButton.setImage(#imageLiteral(resourceName: "flashOutline"), for: UIControl.State())
-        }else if flashMode == .off{
-            flashMode = .auto
-            flashButton.setImage(#imageLiteral(resourceName: "flashauto"), for: UIControl.State())
-        }
-    }
-    
 }
 
 
 extension HlgCamViewController {
-    @IBAction func chooseUltraWideCamera(_ sender:Any) {
-        self.switchCamera(.builtInUltraWideCamera)
-    }
     
-    @IBAction func chooseWideCamera(_ sender:Any) {
-        self.switchCamera(.builtInWideAngleCamera)
-    }
     
-    @IBAction func chooseTeleCamera(_ sender:Any) {
-        self.switchCamera(.builtInTelephotoCamera)
+    @IBAction func chooseNextAvailableCamera(_ sender:Any) {
+        if self.availableCameraOpts.count <= 1 {
+            return
+        }
+        
+        var cameraId = 0
+        var idx = 0
+        for t in self.availableCameraOpts {
+            if self.videoDevice?.deviceType == t {
+                cameraId = idx
+                break
+            }
+            
+            idx+=1
+        }
+        
+        cameraId = (cameraId+1)%self.availableCameraOpts.count
+        
+        let t = self.availableCameraOpts[cameraId]
+        self.switchCamera(t, completion: {ok in
+            DispatchQueue.main.async {
+                self.toggleBackCameraBtns()
+            }
+        })
     }
     
     @IBAction func chooseLeftExpBias(_ sender:Any) {
