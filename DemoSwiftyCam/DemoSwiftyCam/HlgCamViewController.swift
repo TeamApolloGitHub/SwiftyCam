@@ -18,6 +18,48 @@ import UIKit
 import AVFoundation
 import PhotosUI
 
+extension UIView {
+  
+    func getViewsByTag(tag:Int) -> Array<UIView> {
+        var out = Array<UIView>()
+        let found = subviews.filter { ($0 as UIView).tag == tag } as [UIView]
+        out.append(contentsOf: found)
+        for v in self.subviews {
+            out.append(contentsOf: v.getViewsByTag(tag: tag))
+        }
+        return out
+    }
+    
+    @IBInspectable var cornerRadiusV: CGFloat {
+        get {
+            return layer.cornerRadius
+        }
+        set {
+            layer.cornerRadius = newValue
+            layer.masksToBounds = newValue > 0
+        }
+    }
+
+    @IBInspectable var borderWidthV: CGFloat {
+        get {
+            return layer.borderWidth
+        }
+        set {
+            layer.borderWidth = newValue
+        }
+    }
+
+    @IBInspectable var borderColorV: UIColor? {
+        get {
+            return UIColor(cgColor: layer.borderColor!)
+        }
+        set {
+            layer.borderColor = newValue?.cgColor
+        }
+    }
+    
+}
+
 class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
     
@@ -26,6 +68,8 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     @IBOutlet weak var captureButton    : SwiftyRecordButton!
     @IBOutlet weak var flipCameraButton : UIButton!
     
+    @IBOutlet weak var previewButton : UIButton!
+    
     
     @IBOutlet weak var zoom1_Btn    : UIButton!
     @IBOutlet weak var zoom2_Btn    : UIButton!
@@ -33,6 +77,10 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
     
     @IBOutlet private weak var iosAndSpeedALabel: UILabel?
     private var exposureSetItem:DispatchWorkItem?
+    
+    private func advCtrls() -> Array<UIView> {
+        return self.view.getViewsByTag(tag: 100)
+    }
     
     let backCameraOpts = [
         AVCaptureDevice.DeviceType.builtInUltraWideCamera,
@@ -183,6 +231,8 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
                     let movCreation = PHAssetCreationRequest.forAsset()
                     movCreation.addResource(with: .video, fileURL: movFile, options: options)
                 }, completionHandler: { success, error in
+                    
+                    
                     if !success {
                         log.warning("couldn't save the movie to your photo library: \(String(describing: error))")
                         DispatchQueue.main.sync {
@@ -225,6 +275,15 @@ class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDele
             
             defer {
                 DispatchQueue.main.async {
+                    if let thumb = self.vtbCompressor?.targetThumb {
+                        for s:UIControl.State in [.normal, .focused, .highlighted, .selected] {
+                            self.previewButton.imageView?.contentMode = .scaleAspectFill
+                            self.previewButton.setImage(thumb, for: s)
+//                            self.previewButton.setImage(nil, for: s)
+//                            self.previewButton.setBackgroundImage(thumb, for: s)
+                        }
+                    }
+                    
                     self.vtbCompressor = nil
                 }
             }
@@ -535,5 +594,31 @@ extension HlgCamViewController {
             shutter = Int((Int64(t.timescale)/t.value))
         }
         return "ISO: \(iso)/SHUTTER: 1/\(shutter)"
+    }
+    
+    @IBAction func toggleMoreCtrls(_ sender:Any) {
+        let ctrls = self.advCtrls()
+        
+        var active = false
+        for v in ctrls {
+            if v.isHidden == false {
+                active = true
+                break
+            }
+        }
+        
+        if active {
+            for v in ctrls {
+                v.isHidden = true
+            }
+        } else {
+            for v in ctrls {
+                v.isHidden = false
+            }
+        }
+    }
+    
+    @IBAction func openGallery(_ sender:Any) {
+        UIApplication.shared.open(URL(string: "photos-redirect://")!)
     }
 }

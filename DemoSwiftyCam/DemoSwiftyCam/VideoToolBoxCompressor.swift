@@ -68,6 +68,8 @@ class VideoToolBoxCompressor : NSObject {
     
     public var compressQuality = 0.95
     
+    public var targetThumb:UIImage?
+    
     private func codecTypeValueForCurrentSetting() -> CMVideoCodecType {
         if (!MediaUtil.hasHEVCHardwareEncoder) {
             return kCMVideoCodecType_H264
@@ -308,6 +310,10 @@ class VideoToolBoxCompressor : NSObject {
                 
                 if (result != noErr) {
                     log.warning("submit frame to encoder failed: \(result.codeString)")
+                }
+                
+                if (self.targetThumb == nil) {
+                    self.targetThumb = UIImage(pixelBuffer: pixelBuffer, with: self.imageOrientOpt, scale:0.1)
                 }
                 
                 
