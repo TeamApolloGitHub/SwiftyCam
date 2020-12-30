@@ -48,7 +48,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hke-fJ-4fX" customClass="SwiftyRecordButton" customModule="DemoSwiftyCam" customModuleProvider="target">
-                                <rect key="frame" x="122.5" y="465" width="75" height="75"/>
+                                <rect key="frame" x="122.5" y="471" width="75" height="75"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="75" id="8Mb-dy-Ned"/>
@@ -56,7 +56,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hS2-sy-kuv">
-                                <rect key="frame" x="19.5" y="475" width="55" height="55"/>
+                                <rect key="frame" x="19.5" y="481" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="55" id="ZgA-AR-Nbq"/>
                                     <constraint firstAttribute="height" constant="55" id="ccd-JU-aC5"/>
@@ -67,7 +67,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GLY-dx-vLd" userLabel="ExpBiasRight">
-                                <rect key="frame" x="248" y="229" width="44" height="44"/>
+                                <rect key="frame" x="250" y="229" width="44" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="TrE-4y-md1"/>
                                     <constraint firstAttribute="height" constant="44" id="UaM-t1-8oD"/>
@@ -81,7 +81,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KfW-au-3lB" userLabel="ExpBiasLeft">
-                                <rect key="frame" x="248" y="295" width="44" height="44"/>
+                                <rect key="frame" x="250" y="295" width="44" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="44" id="13E-Rg-tlO"/>
                                     <constraint firstAttribute="height" constant="44" id="Swu-ui-fyM"/>
@@ -109,7 +109,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a4g-DL-voR">
-                                <rect key="frame" x="245.5" y="475" width="55" height="55"/>
+                                <rect key="frame" x="245.5" y="481" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="55" id="Eg8-TX-VaT"/>
                                     <constraint firstAttribute="width" constant="55" id="rbV-I9-srh"/>
@@ -124,7 +124,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="78J-0B-bmD">
-                                <rect key="frame" x="245.5" y="475" width="55" height="55"/>
+                                <rect key="frame" x="245.5" y="481" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="55" id="jBA-c4-R1T"/>
                                     <constraint firstAttribute="height" constant="55" id="zJm-AJ-tXM"/>
@@ -148,7 +148,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="EXP BIAS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yI7-lx-Fa3" userLabel="ExpBIAS Label">
-                                <rect key="frame" x="245.5" y="273" width="49.5" height="22"/>
+                                <rect key="frame" x="247.5" y="273" width="49.5" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="4ua-zz-Uq0"/>
                                 </constraints>
@@ -157,7 +157,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R0e-DO-ao8">
-                                <rect key="frame" x="245.5" y="475" width="55" height="55"/>
+                                <rect key="frame" x="245.5" y="481" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="55" id="NnU-hS-OSS"/>
                                     <constraint firstAttribute="height" constant="55" id="uPk-oK-Xz4"/>
@@ -173,17 +173,18 @@
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="KfW-au-3lB" secondAttribute="trailing" constant="28" id="15c-VG-0zY"/>
+                            <constraint firstAttribute="trailing" secondItem="KfW-au-3lB" secondAttribute="trailing" constant="26" id="15c-VG-0zY"/>
                             <constraint firstItem="CSQ-cn-rT5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="1kO-hc-dZ6"/>
                             <constraint firstItem="78J-0B-bmD" firstAttribute="centerX" secondItem="R0e-DO-ao8" secondAttribute="centerX" id="1sZ-gB-D1n"/>
                             <constraint firstItem="hke-fJ-4fX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="22M-gB-uKl"/>
+                            <constraint firstItem="yI7-lx-Fa3" firstAttribute="top" secondItem="GLY-dx-vLd" secondAttribute="bottom" id="39p-dh-9ls"/>
                             <constraint firstItem="CSQ-cn-rT5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8U7-19-0Vg"/>
                             <constraint firstItem="hS2-sy-kuv" firstAttribute="centerY" secondItem="hke-fJ-4fX" secondAttribute="centerY" id="AuI-5x-aKM"/>
                             <constraint firstItem="yI7-lx-Fa3" firstAttribute="centerX" secondItem="GLY-dx-vLd" secondAttribute="centerX" id="Fwb-AL-5p9"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hke-fJ-4fX" secondAttribute="bottom" constant="28" id="HjD-HJ-HzG"/>
+                            <constraint firstItem="KfW-au-3lB" firstAttribute="top" secondItem="yI7-lx-Fa3" secondAttribute="bottom" id="HUC-zf-mkC"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hke-fJ-4fX" secondAttribute="bottom" constant="22" id="HjD-HJ-HzG"/>
                             <constraint firstItem="R0e-DO-ao8" firstAttribute="leading" secondItem="hke-fJ-4fX" secondAttribute="trailing" constant="48" id="PCF-9Z-teT"/>
-                            <constraint firstAttribute="trailing" secondItem="GLY-dx-vLd" secondAttribute="trailing" constant="28" id="RtA-PU-aHV"/>
-                            <constraint firstItem="GLY-dx-vLd" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-33" id="S2a-Od-Qde"/>
+                            <constraint firstAttribute="trailing" secondItem="GLY-dx-vLd" secondAttribute="trailing" constant="26" id="RtA-PU-aHV"/>
                             <constraint firstItem="R0e-DO-ao8" firstAttribute="centerY" secondItem="hke-fJ-4fX" secondAttribute="centerY" id="V8k-Uf-mQe"/>
                             <constraint firstItem="Jaw-8i-PX4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ZIR-4U-OqP"/>
                             <constraint firstItem="Jaw-8i-PX4" firstAttribute="top" secondItem="CSQ-cn-rT5" secondAttribute="bottom" constant="2" id="aen-gg-wBB"/>
@@ -196,7 +197,6 @@
                             <constraint firstItem="edD-PM-gjp" firstAttribute="centerY" secondItem="Jaw-8i-PX4" secondAttribute="centerY" id="wdY-KU-UY7"/>
                             <constraint firstItem="yI7-lx-Fa3" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="xak-oY-xiL"/>
                             <constraint firstItem="uMK-b2-8t3" firstAttribute="centerY" secondItem="Jaw-8i-PX4" secondAttribute="centerY" id="yT1-O2-oAr"/>
-                            <constraint firstItem="KfW-au-3lB" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="33" id="yjQ-dk-Ywn"/>
                         </constraints>
                     </view>
                     <connections>
