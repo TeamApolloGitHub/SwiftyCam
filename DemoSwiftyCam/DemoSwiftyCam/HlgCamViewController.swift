@@ -20,6 +20,9 @@ import PhotosUI
 
 class HlgCamViewController: SwiftyCamViewController, SwiftyCamViewControllerDelegate {
     
+    
+    let longestShutterSpeed = Double(1.0/30.0)
+    
     @IBOutlet weak var captureButton    : SwiftyRecordButton!
     @IBOutlet weak var flipCameraButton : UIButton!
     @IBOutlet weak var flashButton      : UIButton!
@@ -316,6 +319,7 @@ extension HlgCamViewController {
             flashButton.setImage(#imageLiteral(resourceName: "flashauto"), for: UIControl.State())
         }
     }
+    
 }
 
 
@@ -406,6 +410,10 @@ extension HlgCamViewController {
         
         if (speed > maxSpeed) {
             return max
+        }
+        
+        if (speed > longestShutterSpeed) {
+            return CMTimeMake(value: Int64(Double(target.timescale)*longestShutterSpeed), timescale: target.timescale)
         }
         
         return target
