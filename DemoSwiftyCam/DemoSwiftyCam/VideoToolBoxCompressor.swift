@@ -208,10 +208,11 @@ class VideoToolBoxCompressor : NSObject {
         VTSessionSetProperty(c, key: kVTCompressionPropertyKey_MaxKeyFrameInterval, value: 1 as CFTypeRef)
         
         // bitrates & quality control
+        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_Quality, value: self.compressQuality as CFTypeRef)
+        
 //        let bitRate =  width * height * 4 * 32
 //        print("target bit rate: \(bitRate/1000/1000)Mbps")
 //        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_AverageBitRate, value: bitRate as CFTypeRef)
-        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_Quality, value: self.compressQuality as CFTypeRef)
 //        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_DataRateLimits, value: [80*1024*1024, 1] as CFArray)
 //        VTSessionSetProperty(c, key: kVTCompressionPropertyKey_ExpectedFrameRate, value: 3 as CFTypeRef)
         
@@ -234,7 +235,8 @@ class VideoToolBoxCompressor : NSObject {
         }
         
         
-        //if HLG, false; if P3_D65, true.
+        // TODO
+        // If HLG, false; if P3_D65, true.
         VTSessionSetProperty(c, key: kCMFormatDescriptionExtension_FullRangeVideo, value: false as CFTypeRef)
         
         VTCompressionSessionPrepareToEncodeFrames(c)
