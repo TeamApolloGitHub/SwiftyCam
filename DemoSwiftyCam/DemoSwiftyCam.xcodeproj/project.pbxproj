@@ -24,11 +24,9 @@
 		1675A98E1E00A74A00B80903 /* SwiftyCamButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675A98A1E00A74A00B80903 /* SwiftyCamButton.swift */; };
 		1675A98F1E00A74A00B80903 /* SwiftyCamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675A98B1E00A74A00B80903 /* SwiftyCamViewController.swift */; };
 		1675A9901E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675A98C1E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift */; };
-		DF57492A2589E984002B5BBB /* HelperExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5749292589E984002B5BBB /* HelperExtensions.swift */; };
-		DF57492F258A0D25002B5BBB /* VideoToolBoxCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF57492E258A0D25002B5BBB /* VideoToolBoxCompressor.swift */; };
+		DF072ED425DE653000E7D872 /* VideoToolBoxHelper in Frameworks */ = {isa = PBXBuildFile; productRef = DF072ED325DE653000E7D872 /* VideoToolBoxHelper */; };
 		DF7B87FA2589E57B0066AB90 /* SwiftyBeaver in Frameworks */ = {isa = PBXBuildFile; productRef = DF7B87F92589E57B0066AB90 /* SwiftyBeaver */; };
 		DF7B88002589E7470066AB90 /* common.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FD2589E7470066AB90 /* common.swift */; };
-		DF7B88012589E7470066AB90 /* MediaUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FE2589E7470066AB90 /* MediaUtil.swift */; };
 		DF7B88022589E7470066AB90 /* CameraUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FF2589E7470066AB90 /* CameraUtil.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,10 +47,7 @@
 		1675A98A1E00A74A00B80903 /* SwiftyCamButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyCamButton.swift; path = ../../Source/SwiftyCamButton.swift; sourceTree = "<group>"; };
 		1675A98B1E00A74A00B80903 /* SwiftyCamViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyCamViewController.swift; path = ../../Source/SwiftyCamViewController.swift; sourceTree = "<group>"; };
 		1675A98C1E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftyCamViewControllerDelegate.swift; path = ../../Source/SwiftyCamViewControllerDelegate.swift; sourceTree = "<group>"; };
-		DF5749292589E984002B5BBB /* HelperExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperExtensions.swift; sourceTree = "<group>"; };
-		DF57492E258A0D25002B5BBB /* VideoToolBoxCompressor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoToolBoxCompressor.swift; sourceTree = "<group>"; };
 		DF7B87FD2589E7470066AB90 /* common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = common.swift; sourceTree = "<group>"; };
-		DF7B87FE2589E7470066AB90 /* MediaUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaUtil.swift; sourceTree = "<group>"; };
 		DF7B87FF2589E7470066AB90 /* CameraUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -68,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF072ED425DE653000E7D872 /* VideoToolBoxHelper in Frameworks */,
 				DF7B87FA2589E57B0066AB90 /* SwiftyBeaver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,9 +106,6 @@
 				1675A9771E00A68300B80903 /* HlgCamViewController.swift */,
 				16298B551E2703DC0056D413 /* SwiftyRecordButton.swift */,
 				DF7B87FF2589E7470066AB90 /* CameraUtil.swift */,
-				DF7B87FE2589E7470066AB90 /* MediaUtil.swift */,
-				DF5749292589E984002B5BBB /* HelperExtensions.swift */,
-				DF57492E258A0D25002B5BBB /* VideoToolBoxCompressor.swift */,
 				DF7B87FD2589E7470066AB90 /* common.swift */,
 				1675A9791E00A68300B80903 /* Main.storyboard */,
 				1675A97C1E00A68300B80903 /* Assets.xcassets */,
@@ -181,6 +174,7 @@
 			name = DemoSwiftyCam;
 			packageProductDependencies = (
 				DF7B87F92589E57B0066AB90 /* SwiftyBeaver */,
+				DF072ED325DE653000E7D872 /* VideoToolBoxHelper */,
 			);
 			productName = DemoSwiftyCam;
 			productReference = 1675A9721E00A68300B80903 /* DemoSwiftyCam.app */;
@@ -219,6 +213,7 @@
 			mainGroup = 1675A9691E00A68300B80903;
 			packageReferences = (
 				DF7B87F82589E57B0066AB90 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */,
+				DF072ED225DE653000E7D872 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */,
 			);
 			productRefGroup = 1675A9731E00A68300B80903 /* Products */;
 			projectDirPath = "";
@@ -269,14 +264,11 @@
 			files = (
 				1675A9781E00A68300B80903 /* HlgCamViewController.swift in Sources */,
 				1675A9901E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift in Sources */,
-				DF57492F258A0D25002B5BBB /* VideoToolBoxCompressor.swift in Sources */,
 				DF7B88002589E7470066AB90 /* common.swift in Sources */,
 				1675A9761E00A68300B80903 /* AppDelegate.swift in Sources */,
 				1675A98F1E00A74A00B80903 /* SwiftyCamViewController.swift in Sources */,
-				DF57492A2589E984002B5BBB /* HelperExtensions.swift in Sources */,
 				056AAB091F97CB1700F6A978 /* Orientation.swift in Sources */,
 				DF7B88022589E7470066AB90 /* CameraUtil.swift in Sources */,
-				DF7B88012589E7470066AB90 /* MediaUtil.swift in Sources */,
 				16298B561E2703DC0056D413 /* SwiftyRecordButton.swift in Sources */,
 				1675A98D1E00A74A00B80903 /* PreviewView.swift in Sources */,
 				1675A98E1E00A74A00B80903 /* SwiftyCamButton.swift in Sources */,
@@ -552,6 +544,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DF072ED225DE653000E7D872 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TeamApolloGitHub/videotoolbox_helper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
 		DF7B87F82589E57B0066AB90 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyBeaver/SwiftyBeaver.git";
@@ -563,6 +563,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DF072ED325DE653000E7D872 /* VideoToolBoxHelper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF072ED225DE653000E7D872 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */;
+			productName = VideoToolBoxHelper;
+		};
 		DF7B87F92589E57B0066AB90 /* SwiftyBeaver */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF7B87F82589E57B0066AB90 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */;

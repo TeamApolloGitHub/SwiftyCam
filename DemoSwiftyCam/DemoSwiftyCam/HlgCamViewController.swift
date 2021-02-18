@@ -17,6 +17,7 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 import UIKit
 import AVFoundation
 import PhotosUI
+import VideoToolBoxHelper
 
 extension UIView {
   
