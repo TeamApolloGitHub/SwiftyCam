@@ -24,10 +24,10 @@
 		1675A98E1E00A74A00B80903 /* SwiftyCamButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675A98A1E00A74A00B80903 /* SwiftyCamButton.swift */; };
 		1675A98F1E00A74A00B80903 /* SwiftyCamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675A98B1E00A74A00B80903 /* SwiftyCamViewController.swift */; };
 		1675A9901E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1675A98C1E00A74A00B80903 /* SwiftyCamViewControllerDelegate.swift */; };
-		DF072ED425DE653000E7D872 /* VideoToolBoxHelper in Frameworks */ = {isa = PBXBuildFile; productRef = DF072ED325DE653000E7D872 /* VideoToolBoxHelper */; };
 		DF7B87FA2589E57B0066AB90 /* SwiftyBeaver in Frameworks */ = {isa = PBXBuildFile; productRef = DF7B87F92589E57B0066AB90 /* SwiftyBeaver */; };
 		DF7B88002589E7470066AB90 /* common.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FD2589E7470066AB90 /* common.swift */; };
 		DF7B88022589E7470066AB90 /* CameraUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B87FF2589E7470066AB90 /* CameraUtil.swift */; };
+		DF9E2E4225DFC0F1007EB730 /* VideoToolBoxHelper in Frameworks */ = {isa = PBXBuildFile; productRef = DF9E2E4125DFC0F1007EB730 /* VideoToolBoxHelper */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF072ED425DE653000E7D872 /* VideoToolBoxHelper in Frameworks */,
+				DF9E2E4225DFC0F1007EB730 /* VideoToolBoxHelper in Frameworks */,
 				DF7B87FA2589E57B0066AB90 /* SwiftyBeaver in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -174,7 +174,7 @@
 			name = DemoSwiftyCam;
 			packageProductDependencies = (
 				DF7B87F92589E57B0066AB90 /* SwiftyBeaver */,
-				DF072ED325DE653000E7D872 /* VideoToolBoxHelper */,
+				DF9E2E4125DFC0F1007EB730 /* VideoToolBoxHelper */,
 			);
 			productName = DemoSwiftyCam;
 			productReference = 1675A9721E00A68300B80903 /* DemoSwiftyCam.app */;
@@ -213,7 +213,7 @@
 			mainGroup = 1675A9691E00A68300B80903;
 			packageReferences = (
 				DF7B87F82589E57B0066AB90 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */,
-				DF072ED225DE653000E7D872 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */,
+				DF9E2E4025DFC0F1007EB730 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */,
 			);
 			productRefGroup = 1675A9731E00A68300B80903 /* Products */;
 			projectDirPath = "";
@@ -544,14 +544,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		DF072ED225DE653000E7D872 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/TeamApolloGitHub/videotoolbox_helper.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
-			};
-		};
 		DF7B87F82589E57B0066AB90 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyBeaver/SwiftyBeaver.git";
@@ -560,18 +552,26 @@
 				minimumVersion = 1.9.3;
 			};
 		};
+		DF9E2E4025DFC0F1007EB730 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:TeamApolloGitHub/videotoolbox_helper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		DF072ED325DE653000E7D872 /* VideoToolBoxHelper */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF072ED225DE653000E7D872 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */;
-			productName = VideoToolBoxHelper;
-		};
 		DF7B87F92589E57B0066AB90 /* SwiftyBeaver */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF7B87F82589E57B0066AB90 /* XCRemoteSwiftPackageReference "SwiftyBeaver" */;
 			productName = SwiftyBeaver;
+		};
+		DF9E2E4125DFC0F1007EB730 /* VideoToolBoxHelper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF9E2E4025DFC0F1007EB730 /* XCRemoteSwiftPackageReference "videotoolbox_helper" */;
+			productName = VideoToolBoxHelper;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
